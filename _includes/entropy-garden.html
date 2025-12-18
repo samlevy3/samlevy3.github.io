@@ -1,284 +1,313 @@
 <div class="entropy-garden-container">
+  <style>
+    .entropy-garden-container * {
+      box-sizing: border-box;
+    }
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L-System Garden</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <style>
-      .entropy-garden-container :is(h1, h2, p, ul, ol, blockquote, pre, code, figure, table) {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Georgia, serif;
-        color: #333;
-      }
+    .entropy-garden-container {
+      background: transparent;
+      min-height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      padding-bottom: 30px;
+      font-family: Georgia, serif;
+    }
 
-      .entropy-garden-container {
-        background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-bottom: 30px;
-      }
+    .entropy-garden-container .subtitle {
+      color: #5a7a3a;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
 
-      .subtitle {
-        color: #5a7a3a;
-        margin-bottom: 15px;
-        font-size: 14px;
-      }
+    .entropy-garden-container #canvas-container {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
 
-      #canvas-container {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      }
+    .entropy-garden-container .controls {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      max-width: 900px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-      .controls {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-top: 15px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        max-width: 900px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
+    .entropy-garden-container .controls label {
+      font-size: 13px;
+      color: #333;
+    }
 
-      .controls label {
-        font-size: 13px;
-        color: #333;
-      }
+    .entropy-garden-container .controls input[type="text"],
+    .entropy-garden-container .controls input[type="number"],
+    .entropy-garden-container .controls select {
+      padding: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
 
-      .controls input[type="text"],
-      .controls input[type="number"],
-      .controls select {
-        padding: 5px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 13px;
-      }
+    .entropy-garden-container .controls input[type="number"] {
+      width: 55px;
+    }
 
-      .controls input[type="number"] {
-        width: 55px;
-      }
+    .entropy-garden-container .controls input[type="text"] {
+      width: 200px;
+    }
 
-      .controls input[type="text"] {
-        width: 200px;
-      }
+    .entropy-garden-container .controls input[type="color"] {
+      width: 35px;
+      height: 25px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-      .controls input[type="color"] {
-        width: 35px;
-        height: 25px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+    .entropy-garden-container .controls select {
+      min-width: 140px;
+    }
 
-      .controls select {
-        min-width: 140px;
-      }
+    .entropy-garden-container button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
 
-      button {
-        padding: 8px 14px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 13px;
-        transition: all 0.2s;
-      }
+    .entropy-garden-container .plant-btn {
+      background: #4a7c23;
+      color: white;
+    }
 
-      .plant-btn {
-        background: #4a7c23;
-        color: white;
-      }
+    .entropy-garden-container .plant-btn:hover {
+      background: #5a9428;
+    }
 
-      .plant-btn:hover {
-        background: #5a9428;
-      }
+    .entropy-garden-container .sky-btn {
+      background: #5ba4d4;
+      color: white;
+    }
 
-      .sky-btn {
-        background: #5ba4d4;
-        color: white;
-      }
+    .entropy-garden-container .sky-btn:hover {
+      background: #6bb4e4;
+    }
 
-      .sky-btn:hover {
-        background: #6bb4e4;
-      }
+    .entropy-garden-container .reset-btn {
+      background: #c0392b;
+      color: white;
+    }
 
-      .reset-btn {
-        background: #c0392b;
-        color: white;
-      }
+    .entropy-garden-container .reset-btn:hover {
+      background: #e74c3c;
+    }
 
-      .reset-btn:hover {
-        background: #e74c3c;
-      }
+    .entropy-garden-container .theme-btn {
+      background: #455a64;
+      color: white;
+    }
 
-      .section-label {
-        font-size: 13px;
-        color: #555;
-        margin-right: 5px;
-        font-weight: bold;
-      }
+    .entropy-garden-container .theme-btn:hover {
+      background: #546e7a;
+    }
 
-      .color-group {
-        display: flex;
-        gap: 4px;
-        align-items: center;
-      }
+    .entropy-garden-container .section-label {
+      font-size: 13px;
+      color: #555;
+      margin-right: 5px;
+      font-weight: bold;
+    }
 
-      .color-group span {
-        font-size: 11px;
-        color: #666;
-      }
+    .entropy-garden-container .color-group {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
 
-      .instructions {
-        font-size: 12px;
-        color: #666;
-        margin-top: 10px;
-        text-align: center;
-      }
+    .entropy-garden-container .color-group span {
+      font-size: 11px;
+      color: #666;
+    }
 
-      .divider {
-        width: 1px;
-        height: 25px;
-        background: #ddd;
-        margin: 0 5px;
-      }
+    .entropy-garden-container .instructions {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      text-align: center;
+    }
 
-      .type-indicator {
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 10px;
-        background: #f0f0f0;
-        color: #666;
-        white-space: nowrap;
-      }
+    .entropy-garden-container .divider {
+      width: 1px;
+      height: 25px;
+      background: #ddd;
+      margin: 0 5px;
+    }
 
-      .type-indicator.lsystem {
-        background: #e8f5e9;
-        color: #2e7d32;
-      }
+    .entropy-garden-container .type-indicator {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: #f0f0f0;
+      color: #666;
+      white-space: nowrap;
+    }
 
-      .type-indicator.stochastic {
-        background: #fce4ec;
-        color: #c2185b;
-      }
+    .entropy-garden-container .type-indicator.lsystem {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
 
-      .type-indicator.ifs {
-        background: #fff3e0;
-        color: #e65100;
-      }
+    .entropy-garden-container .type-indicator.stochastic {
+      background: #fce4ec;
+      color: #c2185b;
+    }
 
-      .algo-description {
-        font-size: 11px;
-        color: #666;
-        font-style: italic;
-        width: 100%;
-        margin-top: -5px;
-        padding: 8px 12px;
-        background: #f9f9f9;
-        border-radius: 4px;
-      }
+    .entropy-garden-container .type-indicator.ifs {
+      background: #fff3e0;
+      color: #e65100;
+    }
 
-      .param-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
+    .entropy-garden-container .algo-description {
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+      width: 100%;
+      margin-top: -5px;
+      padding: 8px 12px;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
 
-      optgroup {
-        font-weight: bold;
-        color: #333;
-      }
+    .entropy-garden-container .param-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-      option {
-        font-weight: normal;
-        padding: 4px;
-      }
-    </style>
-    <p class="subtitle"></p>
-    <div id="canvas-container"></div>
+    .entropy-garden-container optgroup {
+      font-weight: bold;
+      color: #333;
+    }
 
-    <div class="controls">
-      <span class="section-label">Algorithm:</span>
-      <select id="algorithmSelect" onchange="setPreset(this.value)">
-        <optgroup label="Deterministic Plants">
-          <option value="bush">Bush</option>
-          <option value="tree">Tree</option>
-          <option value="fern">Fern</option>
-          <option value="fractal">Fractal</option>
-          <option value="flower">Flower</option>
-        </optgroup>
-        <optgroup label="Stochastic Plants">
-          <option value="wildBush">Wild Bush</option>
-          <option value="wildTree">Wild Tree</option>
-          <option value="vine">Vine</option>
-          <option value="windswept">Windswept</option>
-        </optgroup>
-        <optgroup label="Sky Objects">
-          <option value="sun">Sun</option>
-          <option value="cloud">Cloud</option>
-          <option value="star">Star</option>
-        </optgroup>
-      </select>
-      <span class="type-indicator lsystem" id="typeIndicator">Deterministic L-System</span>
+    .entropy-garden-container option {
+      font-weight: normal;
+      padding: 4px;
+    }
+
+    /* Dark mode styles */
+    .entropy-garden-container.dark-mode {
+      background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    }
+
+    .entropy-garden-container.dark-mode .controls {
+      background: rgba(30, 30, 30, 0.9);
+    }
+
+    .entropy-garden-container.dark-mode .controls label,
+    .entropy-garden-container.dark-mode .section-label,
+    .entropy-garden-container.dark-mode .instructions {
+      color: #e0e0e0;
+    }
+
+    .entropy-garden-container.dark-mode .type-indicator {
+      background: #2a2a2a;
+      color: #bbb;
+    }
+
+    .entropy-garden-container.dark-mode .algo-description {
+      background: #252525;
+      color: #ccc;
+    }
+  </style>
+
+  <p class="subtitle"></p>
+  <div id="canvas-container"></div>
+
+  <div class="controls">
+    <span class="section-label">Algorithm:</span>
+    <select id="algorithmSelect" onchange="setPreset(this.value)">
+      <optgroup label="Deterministic Plants">
+        <option value="bush">Bush</option>
+        <option value="tree">Tree</option>
+        <option value="fern">Fern</option>
+        <option value="fractal">Fractal</option>
+        <option value="flower">Flower</option>
+      </optgroup>
+      <optgroup label="Stochastic Plants">
+        <option value="wildBush">Wild Bush</option>
+        <option value="wildTree">Wild Tree</option>
+        <option value="vine">Vine</option>
+        <option value="windswept">Windswept</option>
+      </optgroup>
+      <optgroup label="Sky Objects">
+        <option value="sun">Sun</option>
+        <option value="cloud">Cloud</option>
+        <option value="star">Star</option>
+      </optgroup>
+    </select>
+    <span class="type-indicator lsystem" id="typeIndicator">Deterministic L-System</span>
+  </div>
+
+  <div class="controls">
+    <p class="algo-description" id="algoDescription">Classic branching pattern with symmetric growth.</p>
+  </div>
+
+  <div class="controls">
+    <div class="param-group">
+      <label>Axiom: <input type="text" id="axiom" value="F"></label>
+      <label>Rule(s): <input type="text" id="rule" value="F=FF+[+F-F-F]-[-F+F+F]" style="width: 280px;"></label>
     </div>
+  </div>
 
-    <div class="controls">
-      <p class="algo-description" id="algoDescription">Classic branching pattern with symmetric growth.</p>
+  <div class="controls">
+    <div class="param-group">
+      <label>Generations: <input type="number" id="gens" value="4" min="1" max="8"></label>
+      <label>Angle: <input type="number" id="angle" value="25" min="1" max="180"></label>
+      <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5"></label>
+      <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5">%</label>
+      <label>Growth Speed: <input type="number" id="growthSpeed" value="0.15" min="0.01" max="1" step="0.05"></label>
     </div>
+  </div>
 
-    <div class="controls">
-      <div class="param-group">
-        <label>Axiom: <input type="text" id="axiom" value="F"></label>
-        <label>Rule(s): <input type="text" id="rule" value="F=FF+[+F-F-F]-[-F+F+F]" style="width: 280px;"></label>
-      </div>
+  <div class="controls">
+    <span class="section-label">Colors:</span>
+    <div class="color-group">
+      <span>Base</span>
+      <input type="color" id="color0" value="#228B22">
     </div>
-
-    <div class="controls">
-      <div class="param-group">
-        <label>Generations: <input type="number" id="gens" value="4" min="1" max="8"></label>
-        <label>Angle: <input type="number" id="angle" value="25" min="1" max="180"></label>
-        <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5"></label>
-        <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5">%</label>
-        <label>Growth Speed: <input type="number" id="growthSpeed" value="0.15" min="0.01" max="1" step="0.05"></label>
-      </div>
+    <div class="color-group">
+      <span>Mid</span>
+      <input type="color" id="color1" value="#32CD32">
     </div>
-
-    <div class="controls">
-      <span class="section-label">Colors:</span>
-      <div class="color-group">
-        <span>Base</span>
-        <input type="color" id="color0" value="#228B22">
-      </div>
-      <div class="color-group">
-        <span>Mid</span>
-        <input type="color" id="color1" value="#32CD32">
-      </div>
-      <div class="color-group">
-        <span>Tips</span>
-        <input type="color" id="color2" value="#90EE90">
-      </div>
-      <div class="divider"></div>
-      <button class="reset-btn" onclick="resetGarden()">Clear All</button>
-      <button class="theme-btn" onclick="toggleTheme()">🌙 Night</button>
+    <div class="color-group">
+      <span>Tips</span>
+      <input type="color" id="color2" value="#90EE90">
     </div>
+    <div class="divider"></div>
+    <button class="reset-btn" onclick="resetGarden()">Clear All</button>
+    <button class="theme-btn" onclick="toggleTheme()">🌙 Night</button>
+  </div>
 
-    <p class="instructions">Select an algorithm, adjust parameters, then click the canvas to place</p>
+  <p class="instructions">Select an algorithm, adjust parameters, then click the canvas to place</p>
 
-    <script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script>
+    (function() {
       let plants = [];
       let skyObjects = [];
       let plantMode = 'ground';
       let currentType = 'lsystem';
 
       const presets = {
-        // === DETERMINISTIC PLANTS ===
         bush: {
           type: 'lsystem',
           axiom: 'F',
@@ -339,8 +368,6 @@
           randomness: 0,
           description: 'Wide branching angles create flower-like spread.'
         },
-
-        // === STOCHASTIC PLANTS ===
         wildBush: {
           type: 'stochastic',
           axiom: 'F',
@@ -389,8 +416,6 @@
           randomness: 30,
           description: 'Biased toward one direction, like wind-shaped growth.'
         },
-
-        // === SKY OBJECTS ===
         sun: {
           type: 'lsystem',
           axiom: 'F[+F][-F][++F][--F][+++F][---F][++++F][----F][+++++F][-----F][++++++F][------F]',
@@ -431,7 +456,7 @@
           lineWidth: 2,
           randomness: 0,
           description: 'Radial star burst with pentagonal symmetry.'
-        },
+        }
       };
 
       function hexToRgb(hex) {
@@ -443,13 +468,12 @@
         ] : [0, 0, 0];
       }
 
-      function setPreset(name) {
+      window.setPreset = function(name) {
         const p = presets[name];
         if (!p) return;
 
         currentType = p.type;
 
-        // Update type indicator
         const indicator = document.getElementById('typeIndicator');
         if (p.type === 'ifs') {
           indicator.textContent = 'IFS (Chaos Game)';
@@ -462,7 +486,6 @@
           indicator.className = 'type-indicator lsystem';
         }
 
-        // Update description
         document.getElementById('algoDescription').textContent = p.description;
 
         if (p.type === 'lsystem' || p.type === 'stochastic') {
@@ -486,35 +509,27 @@
         document.getElementById('color2').value = p.colors[2];
 
         setPlantMode(p.isSky ? 'sky' : 'ground');
-      }
+      };
 
-      function setPlantMode(mode) {
+      window.setPlantMode = function(mode) {
         plantMode = mode;
-      }
+      };
 
-      function resetGarden() {
+      window.resetGarden = function() {
         plants = [];
         skyObjects = [];
-      }
+      };
 
-      function setup() {
-        let canvas = createCanvas(800, 600);
-        canvas.parent('canvas-container');
-        angleMode(DEGREES);
-
-        // Set initial preset
-        setPreset('bush');
-      }
-
-
-      function mousePressed() {
-        if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-
-        const config = getCurrentConfig();
-        const isSky = plantMode === 'sky';
-
-        addObject(mouseX, mouseY, config, isSky);
-      }
+      window.toggleTheme = function() {
+        const container = document.querySelector('.entropy-garden-container');
+        container.classList.toggle('dark-mode');
+        const btn = event.target;
+        if (container.classList.contains('dark-mode')) {
+          btn.textContent = '☀️ Day';
+        } else {
+          btn.textContent = '🌙 Night';
+        }
+      };
 
       function getCurrentConfig() {
         if (currentType === 'ifs') {
@@ -560,7 +575,6 @@
       }
 
       function parseRules(ruleStr) {
-        // Parse rules, handling stochastic rules separated by |
         const ruleMap = {};
 
         ruleStr.split(',').forEach(r => {
@@ -585,7 +599,6 @@
           if (ruleMap[char]) {
             const alternatives = ruleMap[char];
             if (isStochastic && alternatives.length > 1) {
-              // Randomly pick one alternative
               const pick = Math.floor(Math.random() * alternatives.length);
               next += alternatives[pick];
             } else {
@@ -714,7 +727,6 @@
 
         for (let char of sentence) {
           if (char === 'F') {
-            // Add randomness to length and direction
             const randLen = len * (1 + (Math.random() - 0.5) * randFactor);
             const randDir = dir + (Math.random() - 0.5) * angle * randFactor;
 
@@ -748,25 +760,38 @@
         return segments;
       }
 
-      function draw() {
-        const isDark = document.body.classList.contains('dark-mode');
+      window.setup = function() {
+        let canvas = createCanvas(800, 600);
+        canvas.parent('canvas-container');
+        angleMode(DEGREES);
 
-        // Sky gradient - changes based on theme
+        setPreset('bush');
+      };
+
+      window.mousePressed = function() {
+        if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
+
+        const config = getCurrentConfig();
+        const isSky = plantMode === 'sky';
+
+        addObject(mouseX, mouseY, config, isSky);
+      };
+
+      window.draw = function() {
+        const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
+
         for (let y = 0; y < height - 80; y++) {
           let inter = map(y, 0, height - 80, 0, 1);
           let c;
           if (isDark) {
-            // Night sky: dark blue to darker blue
             c = lerpColor(color(25, 25, 60), color(10, 10, 30), inter);
           } else {
-            // Day sky: light blue
             c = lerpColor(color(135, 206, 235), color(240, 248, 255), inter);
           }
           stroke(c);
           line(0, y, width, y);
         }
 
-        // Draw sky objects
         for (let obj of skyObjects) {
           if (obj.type === 'ifs') {
             drawIFSObject(obj);
@@ -777,24 +802,21 @@
           }
         }
 
-        // Ground - darker at night
         noStroke();
         if (isDark) {
-          fill(40, 35, 30); // Dark brown for night
+          fill(40, 35, 30);
         } else {
-          fill(139, 119, 101); // Regular brown
+          fill(139, 119, 101);
         }
         rect(0, height - 80, width, 80);
 
-        // Grass layer - darker at night
         if (isDark) {
-          fill(30, 45, 25); // Dark green
+          fill(30, 45, 25);
         } else {
-          fill(86, 125, 70); // Regular green
+          fill(86, 125, 70);
         }
         rect(0, height - 80, width, 15);
 
-        // Grass blades - darker at night
         if (isDark) {
           stroke(25, 35, 20);
         } else {
@@ -808,7 +830,6 @@
           line(i, height - 80, i + sway, height - 80 - h);
         }
 
-        // Draw plants
         for (let plant of plants) {
           if (plant.type === 'ifs') {
             drawIFSObject(plant);
@@ -819,7 +840,6 @@
           }
         }
 
-        // Cursor hint
         if (plantMode) {
           noFill();
           strokeWeight(2);
@@ -833,7 +853,7 @@
           }
           strokeWeight(1);
         }
-      }
+      };
 
       function drawIFSObject(obj) {
         push();
@@ -854,8 +874,8 @@
 
       function growIFSObject(obj) {
         if (obj.complete) return;
-        const speed = obj.growthSpeed || 0.15;  // Use stored speed
-        obj.currentPoint += Math.floor(speed * 800);  // Scale for IFS points
+        const speed = obj.growthSpeed || 0.15;
+        obj.currentPoint += Math.floor(speed * 800);
         if (obj.currentPoint >= obj.points.length) {
           obj.complete = true;
         }
@@ -904,7 +924,6 @@
 
         stroke(col[0], col[1], col[2]);
 
-        // Line width tapers with depth
         const thickness = max(baseLineWidth - seg.depth * (baseLineWidth * 0.15), 1);
         strokeWeight(thickness);
 
@@ -916,7 +935,7 @@
       function growLSystemObject(obj) {
         if (obj.complete) return;
 
-        const speed = obj.growthSpeed || 0.15;  // Use stored speed
+        const speed = obj.growthSpeed || 0.15;
         obj.growthProgress += speed;
 
         if (obj.growthProgress >= 1) {
@@ -928,16 +947,6 @@
           }
         }
       }
-
-      function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        const btn = event.target;
-        if (document.body.classList.contains('dark-mode')) {
-          btn.textContent = '☀️ Day';
-        } else {
-          btn.textContent = '🌙 Night';
-        }
-      }
-    </script>
-
+    })();
+  </script>
 </div>

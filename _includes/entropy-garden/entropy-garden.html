@@ -814,13 +814,10 @@
 
       /* Function to add initial objects */
       function addInitialObjects() {
-        // Add sun in upper left area
         addPresetObject(120, 80, 'sun');
         
-        // Add cloud in upper right area
         addPresetObject(600, 100, 'cloud');
         
-        // Add lavender plants at the bottom
         addPresetObject(600, 520, 'stochasticLavender');
       }
 
@@ -831,7 +828,6 @@
           canvas.parent('canvas-container');
           p.angleMode(p.DEGREES);
           
-          // Add initial objects after canvas is ready
           addInitialObjects();
           canvasReady = true;
         };

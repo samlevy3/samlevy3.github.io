@@ -235,10 +235,10 @@
         <option value="flower">Flower</option>
       </optgroup>
       <optgroup label="Stochastic Plants">
-        <option value="wildBush">Wild Bush</option>
-        <option value="wildTree">Wild Tree</option>
-        <option value="vine">Vine</option>
-        <option value="windswept">Windswept</option>
+        <option value="stochasticBush">Stochastic Bush</option>
+        <option value="stochasticTree">Stochastic Tree</option>
+        <option value="stochasticVine">Vine</option>
+        <option value="stochasticFern">Windswept</option>
       </optgroup>
       <optgroup label="Sky Objects">
         <option value="sun">Sun</option>
@@ -301,7 +301,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <script>
     (function() {
-      // State variables
+      /* State variables */
       let plants = [];
       let skyObjects = [];
       let plantMode = 'ground';
@@ -368,7 +368,7 @@
           lineWidth: 3,
           randomness: 0,
         },
-        wildBush: {
+        stochasticBush: {
           type: 'stochastic',
           axiom: 'F',
           rule: 'F=FF+[+F-F-F]-[-F+F+F]\nF=F[+F]F[-F]F\nF=FF-[-F+F]+[+F-F]',
@@ -380,7 +380,7 @@
           lineWidth: 4,
           randomness: 15,
         },
-        wildTree: {
+        stochasticTree: {
           type: 'stochastic',
           axiom: 'X',
           rule: 'X=F[+X][-X]FX\nX=F[-X]FX\nX=F[+X]FX\nF=FF',
@@ -392,7 +392,7 @@
           lineWidth: 5,
           randomness: 20,
         },
-        vine: {
+        stochasticVine: {
           type: 'stochastic',
           axiom: 'F',
           rule: 'F=F[+F]F\nF=F[-F]F\nF=FF\nF=F[+F][-F]F',
@@ -404,7 +404,7 @@
           lineWidth: 2,
           randomness: 25,
         },
-        windswept: {
+        stochasticWindswept: {
           type: 'stochastic',
           axiom: 'F',
           rule: 'F=FF+[+F-F]-[-F+F]\nF=FF+[+F]-[F]\nF=F+F-F',
@@ -773,7 +773,7 @@
         return [r, g, b];
       }
 
-      // Set up event listeners
+      /* Set up event listeners */
       document.getElementById('algorithmSelect').addEventListener('change', function() {
         setPreset(this.value);
       });
@@ -786,10 +786,10 @@
         toggleTheme(this);
       });
 
-      // Initialize preset
+      /* Initialize preset */
       setPreset('bush');
 
-      // p5.js Instance Mode
+      /* p5.js Instance Mode */
       const sketch = function(p) {
         p.setup = function() {
           let canvas = p.createCanvas(800, 600);
@@ -809,7 +809,7 @@
         p.draw = function() {
           const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
 
-          // Draw sky gradient
+          /* Draw sky gradient */
           for (let y = 0; y < p.height - 80; y++) {
             let inter = p.map(y, 0, p.height - 80, 0, 1);
             let c;
@@ -822,7 +822,7 @@
             p.line(0, y, p.width, y);
           }
 
-          // Draw sky objects
+          /* Draw sky objects */
           for (let obj of skyObjects) {
             if (obj.type === 'ifs') {
               drawIFSObject(p, obj);
@@ -833,7 +833,7 @@
             }
           }
 
-          // Draw ground
+          /* Draw ground */
           p.noStroke();
           if (isDark) {
             p.fill(40, 35, 30);
@@ -842,7 +842,7 @@
           }
           p.rect(0, p.height - 80, p.width, 80);
 
-          // Draw grass layer
+          /* Draw grass layer */
           if (isDark) {
             p.fill(30, 45, 25);
           } else {
@@ -850,7 +850,7 @@
           }
           p.rect(0, p.height - 80, p.width, 15);
 
-          // Draw grass blades
+          /* Draw grass blades */
           if (isDark) {
             p.stroke(25, 35, 20);
           } else {
@@ -864,7 +864,7 @@
             p.line(i, p.height - 80, i + sway, p.height - 80 - h);
           }
 
-          // Draw plants
+          /* Draw plants */
           for (let plant of plants) {
             if (plant.type === 'ifs') {
               drawIFSObject(p, plant);
@@ -875,7 +875,7 @@
             }
           }
 
-          // Draw cursor indicator
+          /* Draw cursor indicator */
           if (plantMode) {
             p.noFill();
             p.strokeWeight(2);
@@ -969,7 +969,7 @@
         }
       };
 
-      // Create the p5 instance
+      /* Create the p5 instance */
       new p5(sketch, 'canvas-container');
     })();
   </script>

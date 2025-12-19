@@ -179,17 +179,6 @@
       color: #e65100;
     }
 
-    .entropy-garden-container .algo-description {
-      font-size: 11px;
-      color: #666;
-      font-style: italic;
-      width: 100%;
-      margin-top: -5px;
-      padding: 8px 12px;
-      background: #f9f9f9;
-      border-radius: 4px;
-    }
-
     .entropy-garden-container .param-group {
       display: flex;
       gap: 8px;
@@ -230,11 +219,6 @@
       background: #2a2a2a;
       color: #bbb;
     }
-
-    .entropy-garden-container.dark-mode .algo-description {
-      background: #252525;
-      color: #ccc;
-    }
   </style>
 
   <p class="subtitle"></p>
@@ -242,7 +226,7 @@
 
   <div class="controls">
     <span class="section-label">Algorithm:</span>
-    <select id="algorithmSelect" onchange="setPreset(this.value)">
+    <select id="algorithmSelect">
       <optgroup label="Deterministic Plants">
         <option value="bush">Bush</option>
         <option value="tree">Tree</option>
@@ -263,10 +247,6 @@
       </optgroup>
     </select>
     <span class="type-indicator lsystem" id="typeIndicator">Deterministic L-System</span>
-  </div>
-
-  <div class="controls">
-    <p class="algo-description" id="algoDescription">Classic branching pattern with symmetric growth.</p>
   </div>
 
   <div class="controls full-width">
@@ -312,8 +292,8 @@
       <input type="color" id="color2" value="#90EE90">
     </div>
     <div class="divider"></div>
-    <button class="reset-btn" onclick="resetGarden()">Clear All</button>
-    <button class="theme-btn" onclick="toggleTheme()">🌙 Night</button>
+    <button class="reset-btn" id="resetBtn">Clear All</button>
+    <button class="theme-btn" id="themeBtn">Night</button>
   </div>
 
   <p class="instructions">Select an algorithm, adjust parameters, then click the canvas to place</p>
@@ -321,6 +301,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <script>
     (function() {
+      // State variables
       let plants = [];
       let skyObjects = [];
       let plantMode = 'ground';
@@ -338,7 +319,6 @@
           gens: 4,
           lineWidth: 4,
           randomness: 0,
-          description: 'Classic branching pattern with symmetric growth.'
         },
         tree: {
           type: 'lsystem',
@@ -351,7 +331,6 @@
           gens: 5,
           lineWidth: 5,
           randomness: 0,
-          description: 'Recursive tree with alternating branches.'
         },
         fern: {
           type: 'lsystem',
@@ -364,7 +343,6 @@
           gens: 5,
           lineWidth: 3,
           randomness: 0,
-          description: 'Curved fronds inspired by natural ferns.'
         },
         fractal: {
           type: 'lsystem',
@@ -377,7 +355,6 @@
           gens: 4,
           lineWidth: 3,
           randomness: 0,
-          description: 'Pure self-similar fractal branching.'
         },
         flower: {
           type: 'lsystem',
@@ -390,7 +367,6 @@
           gens: 5,
           lineWidth: 3,
           randomness: 0,
-          description: 'Wide branching angles create flower-like spread.'
         },
         wildBush: {
           type: 'stochastic',
@@ -403,7 +379,6 @@
           gens: 4,
           lineWidth: 4,
           randomness: 15,
-          description: 'Each F randomly picks one of three growth patterns. Every plant is unique.'
         },
         wildTree: {
           type: 'stochastic',
@@ -416,7 +391,6 @@
           gens: 5,
           lineWidth: 5,
           randomness: 20,
-          description: 'Natural tree variation — branches may grow or skip randomly.'
         },
         vine: {
           type: 'stochastic',
@@ -429,7 +403,6 @@
           gens: 5,
           lineWidth: 2,
           randomness: 25,
-          description: 'Highly unpredictable vine growth with four possible paths.'
         },
         windswept: {
           type: 'stochastic',
@@ -442,7 +415,6 @@
           gens: 4,
           lineWidth: 3,
           randomness: 30,
-          description: 'Biased toward one direction, like wind-shaped growth.'
         },
         sun: {
           type: 'lsystem',
@@ -456,7 +428,6 @@
           gens: 5,
           lineWidth: 1,
           randomness: 0,
-          description: 'Pentagonal fractal sun with multi-letter rules.'
         },
         cloud: {
           type: 'ifs',
@@ -471,7 +442,6 @@
           scale: 200,
           lineWidth: 2,
           randomness: 100,
-          description: 'Iterated Function System — chaos game point cloud.'
         },
         star: {
           type: 'lsystem',
@@ -485,7 +455,6 @@
           gens: 4,
           lineWidth: 2,
           randomness: 0,
-          description: 'Radial star burst with pentagonal symmetry.'
         }
       };
 
@@ -498,7 +467,7 @@
         ] : [0, 0, 0];
       }
 
-      window.setPreset = function(name) {
+      function setPreset(name) {
         const p = presets[name];
         if (!p) return;
 
@@ -515,8 +484,6 @@
           indicator.textContent = 'Deterministic L-System';
           indicator.className = 'type-indicator lsystem';
         }
-
-        document.getElementById('algoDescription').textContent = p.description;
 
         if (p.type === 'lsystem' || p.type === 'stochastic') {
           document.getElementById('axiom').value = p.axiom;
@@ -540,28 +507,23 @@
         document.getElementById('color1').value = p.colors[1];
         document.getElementById('color2').value = p.colors[2];
 
-        setPlantMode(p.isSky ? 'sky' : 'ground');
-      };
+        plantMode = p.isSky ? 'sky' : 'ground';
+      }
 
-      window.setPlantMode = function(mode) {
-        plantMode = mode;
-      };
-
-      window.resetGarden = function() {
+      function resetGarden() {
         plants = [];
         skyObjects = [];
-      };
+      }
 
-      window.toggleTheme = function() {
+      function toggleTheme(btn) {
         const container = document.querySelector('.entropy-garden-container');
         container.classList.toggle('dark-mode');
-        const btn = event.target;
         if (container.classList.contains('dark-mode')) {
-          btn.textContent = '☀️ Day';
+          btn.textContent = 'Day';
         } else {
-          btn.textContent = '🌙 Night';
+          btn.textContent = 'Night';
         }
-      };
+      }
 
       function getCurrentConfig() {
         if (currentType === 'ifs') {
@@ -610,8 +572,6 @@
 
       function parseRules(ruleStr) {
         const ruleMap = {};
-        
-        // Only use newlines to separate rules (ignore | character)
         const rules = ruleStr.split('\n').filter(r => r.trim());
 
         rules.forEach(r => {
@@ -623,7 +583,6 @@
             if (!ruleMap[symbol]) {
               ruleMap[symbol] = [];
             }
-            // Each line with same symbol becomes an alternative
             ruleMap[symbol].push(production);
           }
         });
@@ -636,8 +595,6 @@
         for (let char of sentence) {
           if (ruleMap[char]) {
             const alternatives = ruleMap[char];
-            // If multiple alternatives exist, pick randomly (auto-stochastic)
-            // Otherwise use the first one (deterministic)
             if (alternatives.length > 1) {
               const pick = Math.floor(Math.random() * alternatives.length);
               next += alternatives[pick];
@@ -755,7 +712,7 @@
         };
       }
 
-      function parseLSystem(sentence, angle, gens, isSky, scale = 1, randomness = 0, baseLength = 8) {
+      function parseLSystem(sentence, angle, gens, isSky, scale, randomness, baseLength) {
         const segments = [];
         const stack = [];
         let x = 0, y = 0;
@@ -770,8 +727,8 @@
             const randLen = len * (1 + (Math.random() - 0.5) * randFactor);
             const randDir = dir + (Math.random() - 0.5) * angle * randFactor;
 
-            const newX = x + randLen * cos(randDir);
-            const newY = y + randLen * sin(randDir);
+            const newX = x + randLen * Math.cos(randDir * Math.PI / 180);
+            const newY = y + randLen * Math.sin(randDir * Math.PI / 180);
             segments.push({
               x1: x, y1: y,
               x2: newX, y2: newY,
@@ -800,193 +757,220 @@
         return segments;
       }
 
-      window.setup = function() {
-        let canvas = createCanvas(800, 600);
-        canvas.parent('canvas-container');
-        angleMode(DEGREES);
-
-        setPreset('bush');
-      };
-
-      window.mousePressed = function() {
-        if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return;
-
-        const config = getCurrentConfig();
-        const isSky = plantMode === 'sky';
-
-        addObject(mouseX, mouseY, config, isSky);
-      };
-
-      window.draw = function() {
-        const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
-
-        for (let y = 0; y < height - 80; y++) {
-          let inter = map(y, 0, height - 80, 0, 1);
-          let c;
-          if (isDark) {
-            c = lerpColor(color(25, 25, 60), color(10, 10, 30), inter);
-          } else {
-            c = lerpColor(color(135, 206, 235), color(240, 248, 255), inter);
-          }
-          stroke(c);
-          line(0, y, width, y);
-        }
-
-        for (let obj of skyObjects) {
-          if (obj.type === 'ifs') {
-            drawIFSObject(obj);
-            growIFSObject(obj);
-          } else {
-            drawLSystemObject(obj);
-            growLSystemObject(obj);
-          }
-        }
-
-        noStroke();
-        if (isDark) {
-          fill(40, 35, 30);
-        } else {
-          fill(139, 119, 101);
-        }
-        rect(0, height - 80, width, 80);
-
-        if (isDark) {
-          fill(30, 45, 25);
-        } else {
-          fill(86, 125, 70);
-        }
-        rect(0, height - 80, width, 15);
-
-        if (isDark) {
-          stroke(25, 35, 20);
-        } else {
-          stroke(76, 115, 60);
-        }
-        strokeWeight(1);
-        randomSeed(42);
-        for (let i = 0; i < width; i += 6) {
-          let h = random(5, 18);
-          let sway = random(-3, 3);
-          line(i, height - 80, i + sway, height - 80 - h);
-        }
-
-        for (let plant of plants) {
-          if (plant.type === 'ifs') {
-            drawIFSObject(plant);
-            growIFSObject(plant);
-          } else {
-            drawLSystemObject(plant);
-            growLSystemObject(plant);
-          }
-        }
-
-        if (plantMode) {
-          noFill();
-          strokeWeight(2);
-          if (plantMode === 'sky') {
-            stroke(91, 164, 212, 150);
-            ellipse(mouseX, mouseY, 35, 35);
-          } else {
-            stroke(76, 175, 80, 150);
-            ellipse(mouseX, mouseY, 30, 30);
-            line(mouseX, mouseY - 15, mouseX, mouseY - 28);
-          }
-          strokeWeight(1);
-        }
-      };
-
-      function drawIFSObject(obj) {
-        push();
-        translate(obj.x, obj.y);
-
-        const pointsToDraw = min(obj.currentPoint, obj.points.length);
-
-        for (let i = 0; i < pointsToDraw; i++) {
-          const p = obj.points[i];
-          const col = getColorForDepth(p.depth, obj.colors);
-          stroke(col[0], col[1], col[2], 180);
-          strokeWeight(obj.lineWidth);
-          point(p.x, p.y);
-        }
-
-        pop();
-      }
-
-      function growIFSObject(obj) {
-        if (obj.complete) return;
-        const speed = obj.growthSpeed || 0.15;
-        obj.currentPoint += Math.floor(speed * 800);
-        if (obj.currentPoint >= obj.points.length) {
-          obj.complete = true;
-        }
-      }
-
-      function drawLSystemObject(obj) {
-        push();
-        translate(obj.x, obj.y);
-
-        let maxDepth = 1;
-        for (let seg of obj.segments) {
-          if (seg.depth > maxDepth) maxDepth = seg.depth;
-        }
-
-        for (let i = 0; i < obj.currentSegment && i < obj.segments.length; i++) {
-          drawSegment(obj.segments[i], obj.colors, maxDepth, 1, obj.lineWidth, obj.isSky);
-        }
-
-        if (obj.currentSegment < obj.segments.length) {
-          const seg = obj.segments[obj.currentSegment];
-          drawSegment(seg, obj.colors, maxDepth, obj.growthProgress, obj.lineWidth, obj.isSky);
-        }
-
-        pop();
-      }
-
       function getColorForDepth(t, colors) {
         let r, g, b;
         if (t < 0.5) {
           const t2 = t * 2;
-          r = lerp(colors[0][0], colors[1][0], t2);
-          g = lerp(colors[0][1], colors[1][1], t2);
-          b = lerp(colors[0][2], colors[1][2], t2);
+          r = colors[0][0] + (colors[1][0] - colors[0][0]) * t2;
+          g = colors[0][1] + (colors[1][1] - colors[0][1]) * t2;
+          b = colors[0][2] + (colors[1][2] - colors[0][2]) * t2;
         } else {
           const t2 = (t - 0.5) * 2;
-          r = lerp(colors[1][0], colors[2][0], t2);
-          g = lerp(colors[1][1], colors[2][1], t2);
-          b = lerp(colors[1][2], colors[2][2], t2);
+          r = colors[1][0] + (colors[2][0] - colors[1][0]) * t2;
+          g = colors[1][1] + (colors[2][1] - colors[1][1]) * t2;
+          b = colors[1][2] + (colors[2][2] - colors[1][2]) * t2;
         }
         return [r, g, b];
       }
 
-      function drawSegment(seg, colors, maxDepth, progress, baseLineWidth, isSky) {
-        const t = maxDepth > 0 ? seg.depth / maxDepth : 0;
-        const col = getColorForDepth(t, colors);
+      // Set up event listeners
+      document.getElementById('algorithmSelect').addEventListener('change', function() {
+        setPreset(this.value);
+      });
 
-        stroke(col[0], col[1], col[2]);
+      document.getElementById('resetBtn').addEventListener('click', function() {
+        resetGarden();
+      });
 
-        const thickness = max(baseLineWidth - seg.depth * (baseLineWidth * 0.15), 1);
-        strokeWeight(thickness);
+      document.getElementById('themeBtn').addEventListener('click', function() {
+        toggleTheme(this);
+      });
 
-        const x2 = lerp(seg.x1, seg.x2, progress);
-        const y2 = lerp(seg.y1, seg.y2, progress);
-        line(seg.x1, seg.y1, x2, y2);
-      }
+      // Initialize preset
+      setPreset('bush');
 
-      function growLSystemObject(obj) {
-        if (obj.complete) return;
+      // p5.js Instance Mode
+      const sketch = function(p) {
+        p.setup = function() {
+          let canvas = p.createCanvas(800, 600);
+          canvas.parent('canvas-container');
+          p.angleMode(p.DEGREES);
+        };
 
-        const speed = obj.growthSpeed || 0.15;
-        obj.growthProgress += speed;
+        p.mousePressed = function() {
+          if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
 
-        if (obj.growthProgress >= 1) {
-          obj.growthProgress = 0;
-          obj.currentSegment++;
+          const config = getCurrentConfig();
+          const isSky = plantMode === 'sky';
 
-          if (obj.currentSegment >= obj.segments.length) {
+          addObject(p.mouseX, p.mouseY, config, isSky);
+        };
+
+        p.draw = function() {
+          const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
+
+          // Draw sky gradient
+          for (let y = 0; y < p.height - 80; y++) {
+            let inter = p.map(y, 0, p.height - 80, 0, 1);
+            let c;
+            if (isDark) {
+              c = p.lerpColor(p.color(25, 25, 60), p.color(10, 10, 30), inter);
+            } else {
+              c = p.lerpColor(p.color(135, 206, 235), p.color(240, 248, 255), inter);
+            }
+            p.stroke(c);
+            p.line(0, y, p.width, y);
+          }
+
+          // Draw sky objects
+          for (let obj of skyObjects) {
+            if (obj.type === 'ifs') {
+              drawIFSObject(p, obj);
+              growIFSObject(obj);
+            } else {
+              drawLSystemObject(p, obj);
+              growLSystemObject(obj);
+            }
+          }
+
+          // Draw ground
+          p.noStroke();
+          if (isDark) {
+            p.fill(40, 35, 30);
+          } else {
+            p.fill(139, 119, 101);
+          }
+          p.rect(0, p.height - 80, p.width, 80);
+
+          // Draw grass layer
+          if (isDark) {
+            p.fill(30, 45, 25);
+          } else {
+            p.fill(86, 125, 70);
+          }
+          p.rect(0, p.height - 80, p.width, 15);
+
+          // Draw grass blades
+          if (isDark) {
+            p.stroke(25, 35, 20);
+          } else {
+            p.stroke(76, 115, 60);
+          }
+          p.strokeWeight(1);
+          p.randomSeed(42);
+          for (let i = 0; i < p.width; i += 6) {
+            let h = p.random(5, 18);
+            let sway = p.random(-3, 3);
+            p.line(i, p.height - 80, i + sway, p.height - 80 - h);
+          }
+
+          // Draw plants
+          for (let plant of plants) {
+            if (plant.type === 'ifs') {
+              drawIFSObject(p, plant);
+              growIFSObject(plant);
+            } else {
+              drawLSystemObject(p, plant);
+              growLSystemObject(plant);
+            }
+          }
+
+          // Draw cursor indicator
+          if (plantMode) {
+            p.noFill();
+            p.strokeWeight(2);
+            if (plantMode === 'sky') {
+              p.stroke(91, 164, 212, 150);
+              p.ellipse(p.mouseX, p.mouseY, 35, 35);
+            } else {
+              p.stroke(76, 175, 80, 150);
+              p.ellipse(p.mouseX, p.mouseY, 30, 30);
+              p.line(p.mouseX, p.mouseY - 15, p.mouseX, p.mouseY - 28);
+            }
+            p.strokeWeight(1);
+          }
+        };
+
+        function drawIFSObject(p, obj) {
+          p.push();
+          p.translate(obj.x, obj.y);
+
+          const pointsToDraw = Math.min(obj.currentPoint, obj.points.length);
+
+          for (let i = 0; i < pointsToDraw; i++) {
+            const pt = obj.points[i];
+            const col = getColorForDepth(pt.depth, obj.colors);
+            p.stroke(col[0], col[1], col[2], 180);
+            p.strokeWeight(obj.lineWidth);
+            p.point(pt.x, pt.y);
+          }
+
+          p.pop();
+        }
+
+        function growIFSObject(obj) {
+          if (obj.complete) return;
+          const speed = obj.growthSpeed || 0.15;
+          obj.currentPoint += Math.floor(speed * 800);
+          if (obj.currentPoint >= obj.points.length) {
             obj.complete = true;
           }
         }
-      }
+
+        function drawLSystemObject(p, obj) {
+          p.push();
+          p.translate(obj.x, obj.y);
+
+          let maxDepth = 1;
+          for (let seg of obj.segments) {
+            if (seg.depth > maxDepth) maxDepth = seg.depth;
+          }
+
+          for (let i = 0; i < obj.currentSegment && i < obj.segments.length; i++) {
+            drawSegment(p, obj.segments[i], obj.colors, maxDepth, 1, obj.lineWidth, obj.isSky);
+          }
+
+          if (obj.currentSegment < obj.segments.length) {
+            const seg = obj.segments[obj.currentSegment];
+            drawSegment(p, seg, obj.colors, maxDepth, obj.growthProgress, obj.lineWidth, obj.isSky);
+          }
+
+          p.pop();
+        }
+
+        function drawSegment(p, seg, colors, maxDepth, progress, baseLineWidth, isSky) {
+          const t = maxDepth > 0 ? seg.depth / maxDepth : 0;
+          const col = getColorForDepth(t, colors);
+
+          p.stroke(col[0], col[1], col[2]);
+
+          const thickness = Math.max(baseLineWidth - seg.depth * (baseLineWidth * 0.15), 1);
+          p.strokeWeight(thickness);
+
+          const x2 = seg.x1 + (seg.x2 - seg.x1) * progress;
+          const y2 = seg.y1 + (seg.y2 - seg.y1) * progress;
+          p.line(seg.x1, seg.y1, x2, y2);
+        }
+
+        function growLSystemObject(obj) {
+          if (obj.complete) return;
+
+          const speed = obj.growthSpeed || 0.15;
+          obj.growthProgress += speed;
+
+          if (obj.growthProgress >= 1) {
+            obj.growthProgress = 0;
+            obj.currentSegment++;
+
+            if (obj.currentSegment >= obj.segments.length) {
+              obj.complete = true;
+            }
+          }
+        }
+      };
+
+      // Create the p5 instance
+      new p5(sketch, 'canvas-container');
     })();
   </script>
 </div>

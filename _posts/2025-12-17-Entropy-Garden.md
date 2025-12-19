@@ -125,4 +125,4 @@ Try modifying these parameters in the garden above:
 1. Bourke, Paul. “L-System Manual.” Paulbourke.net, [https://paulbourke.net/fractals/lsys/](https://paulbourke.net/fractals/lsys/).
 2. “L-Systems Turtle Graphics Renderer - HTML5 Canvas - by Kevin Roast.” [https://www.kevs3d.co.uk/dev/lsystems/](https://www.kevs3d.co.uk/dev/lsystems/).
 3. “L-System.” Wikipedia, 4 Jan. 2021, [https://en.wikipedia.org/wiki/L-system](https://en.wikipedia.org/wiki/L-system).
-
+4. “Theory of Computation - Home.” Wooster.edu, 2017, [https://csweb.wooster.edu/dbyrnes/cs220/](https://csweb.wooster.edu/dbyrnes/cs220/). Accessed 19 Dec. 2025.

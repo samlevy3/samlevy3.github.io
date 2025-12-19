@@ -256,23 +256,28 @@
 
   <div class="controls full-width">
     <div style="width: 100%;">
-      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Rules: <span style="font-weight: normal; font-size: 11px; color: #666;">(one per line or comma-separated)</span></label>
-      <textarea id="rule" style="width: 100%; min-height: 90px; font-family: 'Courier New', monospace; resize: vertical;">F=FF+[+F-F-F]-[-F+F+F]</textarea>
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Rules: <span
+          style="font-weight: normal; font-size: 11px; color: #666;">(one per line or comma-separated)</span></label>
+      <textarea id="rule"
+        style="width: 100%; min-height: 90px; font-family: 'Courier New', monospace; resize: vertical;">F=FF+[+F-F-F]-[-F+F+F]</textarea>
     </div>
   </div>
 
   <div class="controls">
     <span class="section-label">Generation:</span>
     <label>Iterations: <input type="number" id="gens" value="4" min="1" max="8"></label>
-    <label>Growth Speed: <input type="number" id="growthSpeed" value="0.5" min="0.01" max="1" step="0.05" style="width: 70px;"></label>
+    <label>Growth Speed: <input type="number" id="growthSpeed" value="0.5" min="0.01" max="1" step="0.05"
+        style="width: 70px;"></label>
   </div>
 
   <div class="controls">
     <span class="section-label">Geometry:</span>
     <label>Angle: <input type="number" id="angle" value="25" min="1" max="180"></label>
     <label>Length: <input type="number" id="length" value="8" min="1" max="50" step="1"></label>
-    <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5" style="width: 60px;"></label>
-    <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5" style="width: 50px;">%</label>
+    <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5"
+        style="width: 60px;"></label>
+    <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5"
+        style="width: 50px;">%</label>
   </div>
 
   <div class="controls">
@@ -298,7 +303,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <script>
-    (function() {
+    (function () {
       /* State variables */
       let plants = [];
       let skyObjects = [];
@@ -628,7 +633,7 @@
       function addPresetObject(x, y, presetName) {
         const p = presets[presetName];
         if (!p) return;
-        
+
         const config = getPresetConfig(presetName);
         if (!config) return;
 
@@ -797,15 +802,15 @@
       }
 
       /* Set up event listeners */
-      document.getElementById('algorithmSelect').addEventListener('change', function() {
+      document.getElementById('algorithmSelect').addEventListener('change', function () {
         setPreset(this.value);
       });
 
-      document.getElementById('resetBtn').addEventListener('click', function() {
+      document.getElementById('resetBtn').addEventListener('click', function () {
         resetGarden();
       });
 
-      document.getElementById('themeBtn').addEventListener('click', function() {
+      document.getElementById('themeBtn').addEventListener('click', function () {
         toggleTheme(this);
       });
 
@@ -815,24 +820,24 @@
       /* Function to add initial objects */
       function addInitialObjects() {
         addPresetObject(120, 80, 'sun');
-        
+
         addPresetObject(600, 100, 'cloud');
-        
+
         addPresetObject(600, 520, 'stochasticLavender');
       }
 
       /* p5.js Instance Mode */
-      const sketch = function(p) {
-        p.setup = function() {
+      const sketch = function (p) {
+        p.setup = function () {
           let canvas = p.createCanvas(800, 600);
           canvas.parent('canvas-container');
           p.angleMode(p.DEGREES);
-          
+
           addInitialObjects();
           canvasReady = true;
         };
 
-        p.mousePressed = function() {
+        p.mousePressed = function () {
           if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
 
           const config = getCurrentConfig();
@@ -842,7 +847,7 @@
           addObject(p.mouseX, p.mouseY, config, isSky);
         };
 
-        p.draw = function() {
+        p.draw = function () {
           const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
 
           /* Draw sky gradient */
@@ -885,7 +890,7 @@
             p.fill(86, 125, 70);
           }
           p.rect(0, p.height - 80, p.width, 15);
-          
+
           /* Draw plants */
           for (let plant of plants) {
             if (plant.type === 'ifs') {

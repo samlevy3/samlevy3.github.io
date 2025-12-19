@@ -2,1007 +2,964 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entropy Garden</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entropy Garden</title>
 </head>
 
 <body>
-  <div class="entropy-garden-container">
-    <style>
-      .entropy-garden-container * {
-        box-sizing: border-box;
-      }
-
-      .entropy-garden-container {
-        background: transparent;
-        min-height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: Georgia, serif;
-      }
-
-      .entropy-garden-container .subtitle {
-        color: #5a7a3a;
-        margin-bottom: 15px;
-        font-size: 14px;
-      }
-
-      .entropy-garden-container #canvas-container {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .entropy-garden-container .controls {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-top: 15px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        max-width: 900px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .entropy-garden-container .controls label {
-        font-size: 13px;
-        color: #333;
-      }
-
-      .entropy-garden-container .controls input[type="text"],
-      .entropy-garden-container .controls input[type="number"],
-      .entropy-garden-container .controls select,
-      .entropy-garden-container .controls textarea {
-        padding: 5px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 13px;
-      }
-
-      .entropy-garden-container .controls textarea {
-        font-family: 'Courier New', monospace;
-        line-height: 1.4;
-      }
-
-      .entropy-garden-container .controls input[type="number"] {
-        width: 55px;
-      }
-
-      .entropy-garden-container .controls input[type="text"] {
-        width: 200px;
-      }
-
-      .entropy-garden-container .controls input[type="color"] {
-        width: 35px;
-        height: 25px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      .entropy-garden-container .controls select {
-        min-width: 140px;
-      }
-
-      .entropy-garden-container button {
-        padding: 8px 14px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 13px;
-        transition: all 0.2s;
-      }
-
-      .entropy-garden-container .plant-btn {
-        background: #4a7c23;
-        color: white;
-      }
-
-      .entropy-garden-container .plant-btn:hover {
-        background: #5a9428;
-      }
-
-      .entropy-garden-container .sky-btn {
-        background: #5ba4d4;
-        color: white;
-      }
-
-      .entropy-garden-container .sky-btn:hover {
-        background: #6bb4e4;
-      }
-
-      .entropy-garden-container .reset-btn {
-        background: #c0392b;
-        color: white;
-      }
-
-      .entropy-garden-container .reset-btn:hover {
-        background: #e74c3c;
-      }
-
-      .entropy-garden-container .theme-btn {
-        background: #455a64;
-        color: white;
-      }
-
-      .entropy-garden-container .theme-btn:hover {
-        background: #546e7a;
-      }
-
-      .entropy-garden-container .section-label {
-        font-size: 13px;
-        color: #555;
-        margin-right: 5px;
-        font-weight: bold;
-      }
-
-      .entropy-garden-container .color-group {
-        display: flex;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .entropy-garden-container .color-group span {
-        font-size: 11px;
-        color: #666;
-      }
-
-      .entropy-garden-container .instructions {
-        font-size: 12px;
-        color: #666;
-        margin-top: 10px;
-        text-align: center;
-      }
-
-      .entropy-garden-container .divider {
-        width: 1px;
-        height: 25px;
-        background: #ddd;
-        margin: 0 5px;
-      }
-
-      .entropy-garden-container .type-indicator {
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 10px;
-        background: #f0f0f0;
-        color: #666;
-        white-space: nowrap;
-      }
-
-      .entropy-garden-container .type-indicator.lsystem {
-        background: #e8f5e9;
-        color: #2e7d32;
-      }
-
-      .entropy-garden-container .type-indicator.stochastic {
-        background: #fce4ec;
-        color: #c2185b;
-      }
-
-      .entropy-garden-container .type-indicator.ifs {
-        background: #fff3e0;
-        color: #e65100;
-      }
-
-      .entropy-garden-container .param-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .entropy-garden-container .full-width {
-        width: 100%;
-      }
-
-      .entropy-garden-container optgroup {
-        font-weight: bold;
-        color: #333;
-      }
-
-      .entropy-garden-container option {
-        font-weight: normal;
-        padding: 4px;
-      }
-
-      /* Dark mode styles */
-      .entropy-garden-container.dark-mode {
-        background: linear-gradient(to bottom, #1a1a2e, #16213e);
-      }
-
-      .entropy-garden-container.dark-mode .controls {
-        background: rgba(30, 30, 30, 0.9);
-      }
-
-      .entropy-garden-container.dark-mode .controls label,
-      .entropy-garden-container.dark-mode .section-label,
-      .entropy-garden-container.dark-mode .instructions {
-        color: #e0e0e0;
-      }
-
-      .entropy-garden-container.dark-mode .type-indicator {
-        background: #2a2a2a;
-        color: #bbb;
-      }
-    </style>
-
-    <h1><a href="https://samlevy.dev/posts/Entropy-Garden/" target="_blank">BLOG POST</a></h1>
-    <div id="canvas-container"></div>
-
-    <div class="controls">
-      <span class="section-label">Algorithm:</span>
-      <select id="algorithmSelect">
-        <optgroup label="Deterministic Plants">
-          <option value="bush">Bush</option>
-          <option value="tree">Tree</option>
-          <option value="fern">Fern</option>
-          <option value="flower">Flower</option>
-        </optgroup>
-        <optgroup label="Stochastic Plants">
-          <option value="stochasticLavender" selected>Stochastic Lavender</option>
-          <option value="stochasticBush">Stochastic Bush</option>
-          <option value="stochasticTree">Stochastic Tree</option>
-        </optgroup>
-        <optgroup label="Sky Objects">
-          <option value="sun">Sun</option>
-          <option value="cloud">Cloud</option>
-          <option value="star">Star</option>
-        </optgroup>
-      </select>
-      <span class="type-indicator lsystem" id="typeIndicator">Deterministic L-System</span>
-    </div>
-
-    <div class="controls full-width">
-      <div style="width: 100%;">
-        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Axiom:</label>
-        <input type="text" id="axiom" value="F" style="width: 100%; font-family: 'Courier New', monospace;">
-      </div>
-    </div>
-
-    <div class="controls full-width">
-      <div style="width: 100%;">
-        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Rules: <span
-            style="font-weight: normal; font-size: 11px; color: #666;">(one per line or comma-separated)</span></label>
-        <textarea id="rule"
-          style="width: 100%; min-height: 90px; font-family: 'Courier New', monospace; resize: vertical;">F=FF+[+F-F-F]-[-F+F+F]</textarea>
-      </div>
-    </div>
-
-    <div class="controls">
-      <span class="section-label">Generation:</span>
-      <label>Iterations: <input type="number" id="gens" value="4" min="1" max="8"></label>
-      <label>Growth Speed: <input type="number" id="growthSpeed" value="0.5" min="0.01" max="1" step="0.05"
-          style="width: 70px;"></label>
-    </div>
-
-    <div class="controls">
-      <span class="section-label">Geometry:</span>
-      <label>Angle: <input type="number" id="angle" value="25" min="1" max="180"></label>
-      <label>Length: <input type="number" id="length" value="8" min="1" max="50" step="1"></label>
-      <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5"
-          style="width: 60px;"></label>
-      <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5"
-          style="width: 50px;">%</label>
-    </div>
-
-    <div class="controls">
-      <span class="section-label">Colors:</span>
-      <div class="color-group">
-        <span>Base</span>
-        <input type="color" id="color0" value="#228B22">
-      </div>
-      <div class="color-group">
-        <span>Mid</span>
-        <input type="color" id="color1" value="#32CD32">
-      </div>
-      <div class="color-group">
-        <span>Tips</span>
-        <input type="color" id="color2" value="#90EE90">
-      </div>
-      <div class="divider"></div>
-      <button class="reset-btn" id="resetBtn">Clear All</button>
-      <button class="theme-btn" id="themeBtn">Night</button>
-    </div>
-
-    <p class="instructions">Select an algorithm, adjust parameters, then click the canvas to place</p>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <script>
-      (function () {
-        /* State variables */
-        let plants = [];
-        let skyObjects = [];
-        let currentType = 'lsystem';
-        let canvasReady = false;
-
-        const defaultSpeed = 0.5;
-
-        const presets = {
-          bush: {
-            type: 'lsystem',
-            axiom: 'F',
-            rule: 'F=FF+[+F-F-F]-[-F+F+F]',
-            angle: 25,
-            length: 10,
-            colors: ['#228B22', '#32CD32', '#90EE90'],
-            isSky: false,
-            gens: 4,
-            lineWidth: 4,
-            randomness: 0,
-          },
-          tree: {
-            type: 'lsystem',
-            axiom: 'X',
-            rule: 'X=F[+X][-X]FX\nF=FF',
-            angle: 30,
-            length: 20,
-            colors: ['#4a3728', '#5d4a3a', '#6b8e23'],
-            isSky: false,
-            gens: 5,
-            lineWidth: 5,
-            randomness: 0,
-          },
-          fern: {
-            type: 'lsystem',
-            axiom: 'X',
-            rule: 'X=F+[[+FXF]-X]-F[-FX]+X+[F]',
-            angle: 20,
-            length: 8,
-            colors: ['#2e7d32', '#43a047', '#a5d6a7'],
-            isSky: false,
-            gens: 5,
-            lineWidth: 3,
-            randomness: 20,
-          },
-          flower: {
-            type: 'lsystem',
-            axiom: 'X',
-            rule: 'X=F[+X][-X]FX\nF=FF',
-            angle: 42,
-            length: 8,
-            colors: ['#558b2f', '#7cb342', '#f06292'],
-            isSky: false,
-            gens: 5,
-            lineWidth: 3,
-            randomness: 0,
-          },
-          stochasticBush: {
-            type: 'stochastic',
-            axiom: 'F',
-            rule: 'F=FF+[+F-F-F]-[-F+F+F]\nF=F[+F]F[-F]F\nF=FF-[-F+F]+[+F-F]',
-            angle: 25,
-            length: 8,
-            colors: ['#2e7d32', '#66bb6a', '#a5d6a7'],
-            isSky: false,
-            gens: 4,
-            lineWidth: 4,
-            randomness: 15,
-          },
-          stochasticLavender: {
-            type: 'lsystem',
-            axiom: 'X',
-            rule: 'X=F+[[+X]-X]-F[-FX]-X\nF=FF',
-            angle: 25,
-            length: 8,
-            colors: ['#238723', '#B57EDC', '#E6E6FA'],
-            isSky: false,
-            gens: 5,
-            lineWidth: 3,
-            randomness: 20,
-          },
-          stochasticTree: {
-            type: 'stochastic',
-            axiom: 'X',
-            rule: 'X=F[+X][-X]FX\nX=F[-X]FX\nX=F[+X]FX\nF=FF',
-            angle: 28,
-            length: 20,
-            colors: ['#5d4037', '#795548', '#81c784'],
-            isSky: false,
-            gens: 5,
-            lineWidth: 2,
-            randomness: 20,
-          },
-          sun: {
-            type: 'lsystem',
-            axiom: '[G]++[G]++[G]++[G]++[G]',
-            rule: 'F=HJ++IJ----GJ[-HJ----FJ]++\nG=+HJ--IJ[---FJ--GJ]+\nH=-FJ++GJ[+++HJ++IJ]-\nI=--HJ++++FJ[+IJ++++GJ]--GJ\nJ=',
-            angle: 36,
-            length: 10,
-            colors: ['#D53007', '#FD9F1C', '#FDE61C'],
-            isSky: true,
-            scale: 0.8,
-            gens: 5,
-            lineWidth: 1,
-            randomness: 0,
-          },
-          cloud: {
-            type: 'ifs',
-            ifsSets: [
-              [0.0, 0.577, -0.577, 0.0, 0.0951, 0.5983, 1 / 3],
-              [0.0, 0.577, -0.577, 0.0, 0.4413, 0.7893, 1 / 3],
-              [0.0, 0.577, -0.577, 0.0, 0.0952, 0.9893, 1 / 3]
-            ],
-            colors: ['#90a4ae', '#b0bec5', '#eceff1'],
-            isSky: true,
-            pointCount: 8000,
-            scale: 200,
-            lineWidth: 2,
-            randomness: 100,
-          },
-          star: {
-            type: 'lsystem',
-            axiom: 'F',
-            rule: 'F=F[++F][--F][+F][-F]F',
-            angle: 36,
-            length: 6,
-            colors: ['#ffd54f', '#ffeb3b', '#fffde7'],
-            isSky: true,
-            scale: 0.3,
-            gens: 4,
-            lineWidth: 2,
-            randomness: 0,
-          }
-        };
-
-        function hexToRgb(hex) {
-          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? [
-            parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16)
-          ] : [0, 0, 0];
-        }
-
-        function setPreset(name) {
-          const p = presets[name];
-          if (!p) return;
-
-          currentType = p.type;
-
-          const indicator = document.getElementById('typeIndicator');
-          if (p.type === 'ifs') {
-            indicator.textContent = 'IFS (Chaos Game)';
-            indicator.className = 'type-indicator ifs';
-          } else if (p.type === 'stochastic') {
-            indicator.textContent = 'Stochastic L-System';
-            indicator.className = 'type-indicator stochastic';
-          } else {
-            indicator.textContent = 'Deterministic L-System';
-            indicator.className = 'type-indicator lsystem';
-          }
-
-          if (p.type === 'lsystem' || p.type === 'stochastic') {
-            document.getElementById('axiom').value = p.axiom;
-            document.getElementById('rule').value = p.rule;
-            document.getElementById('angle').value = p.angle;
-            document.getElementById('gens').value = p.gens || 4;
-            document.getElementById('lineWidth').value = p.lineWidth || 4;
-            document.getElementById('randomness').value = p.randomness || 0;
-            document.getElementById('length').value = p.length || 8;
-          } else {
-            document.getElementById('axiom').value = '(IFS mode)';
-            document.getElementById('rule').value = '(probabilistic transforms)';
-            document.getElementById('angle').value = '-';
-            document.getElementById('gens').value = '-';
-            document.getElementById('lineWidth').value = p.lineWidth || 2;
-            document.getElementById('randomness').value = 100;
-            document.getElementById('length').value = '-';
-          }
-
-          document.getElementById('color0').value = p.colors[0];
-          document.getElementById('color1').value = p.colors[1];
-          document.getElementById('color2').value = p.colors[2];
-        }
-
-        function resetGarden() {
-          plants = [];
-          skyObjects = [];
-        }
-
-        function toggleTheme(btn) {
-          const container = document.querySelector('.entropy-garden-container');
-          container.classList.toggle('dark-mode');
-          if (container.classList.contains('dark-mode')) {
-            btn.textContent = 'Day';
-          } else {
-            btn.textContent = 'Night';
-          }
-        }
-
-        function getCurrentConfig() {
-          if (currentType === 'ifs') {
-            return {
-              type: 'ifs',
-              ifsSets: presets.cloud.ifsSets,
-              colors: [
-                document.getElementById('color0').value,
-                document.getElementById('color1').value,
-                document.getElementById('color2').value
-              ],
-              pointCount: presets.cloud.pointCount,
-              scale: presets.cloud.scale,
-              lineWidth: parseFloat(document.getElementById('lineWidth').value) || 2,
-              growthSpeed: parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed
-            };
-          }
-
-          const axiom = document.getElementById('axiom').value;
-          const ruleStr = document.getElementById('rule').value;
-          const angle = parseInt(document.getElementById('angle').value) || 25;
-          const gens = parseInt(document.getElementById('gens').value) || 4;
-          const length = parseInt(document.getElementById('length').value) || 8;
-          const lineWidth = parseFloat(document.getElementById('lineWidth').value) || 4;
-          const randomness = parseInt(document.getElementById('randomness').value) || 0;
-          const growthSpeed = parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed;
-          const colors = [
-            document.getElementById('color0').value,
-            document.getElementById('color1').value,
-            document.getElementById('color2').value
-          ];
-
-          return {
-            type: currentType,
-            axiom,
-            rule: ruleStr,
-            angle,
-            gens,
-            length,
-            colors,
-            lineWidth,
-            randomness,
-            growthSpeed
-          };
-        }
-
-        function getPresetConfig(presetName) {
-          const p = presets[presetName];
-          if (!p) return null;
-
-          if (p.type === 'ifs') {
-            return {
-              type: 'ifs',
-              ifsSets: p.ifsSets,
-              colors: p.colors,
-              pointCount: p.pointCount,
-              scale: p.scale,
-              lineWidth: p.lineWidth || 2,
-              growthSpeed: defaultSpeed
-            };
-          }
-
-          return {
-            type: p.type,
-            axiom: p.axiom,
-            rule: p.rule,
-            angle: p.angle,
-            gens: p.gens || 4,
-            length: p.length || 8,
-            colors: p.colors,
-            lineWidth: p.lineWidth || 4,
-            randomness: p.randomness || 0,
-            growthSpeed: defaultSpeed,
-            scale: p.scale || 1
-          };
-        }
-
-        function parseRules(ruleStr) {
-          const ruleMap = {};
-          const rules = ruleStr.split('\n').filter(r => r.trim());
-
-          rules.forEach(r => {
-            const parts = r.trim().split('=');
-            if (parts.length === 2) {
-              const symbol = parts[0].trim();
-              const production = parts[1].trim();
-
-              if (!ruleMap[symbol]) {
-                ruleMap[symbol] = [];
-              }
-              ruleMap[symbol].push(production);
+    <div class="entropy-garden-container">
+        <style>
+            .entropy-garden-container * {
+                box-sizing: border-box;
             }
-          });
 
-          return ruleMap;
-        }
-
-        function applyRules(sentence, ruleMap, isStochastic) {
-          let next = '';
-          for (let char of sentence) {
-            if (ruleMap[char]) {
-              const alternatives = ruleMap[char];
-              if (alternatives.length > 1) {
-                const pick = Math.floor(Math.random() * alternatives.length);
-                next += alternatives[pick];
-              } else {
-                next += alternatives[0];
-              }
-            } else {
-              next += char;
+            .entropy-garden-container {
+                background: transparent;
+                min-height: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-family: Georgia, serif;
             }
-          }
-          return next;
-        }
 
-        function addObject(x, y, config, isSky) {
-          if (config.type === 'ifs') {
-            const obj = createIFSObject(x, y, config);
-            if (isSky) skyObjects.push(obj);
-            else plants.push(obj);
-          } else {
-            const obj = createLSystemObject(x, y, config, isSky);
-            if (isSky) skyObjects.push(obj);
-            else plants.push(obj);
-          }
-        }
-
-        function addPresetObject(x, y, presetName) {
-          const p = presets[presetName];
-          if (!p) return;
-
-          const config = getPresetConfig(presetName);
-          if (!config) return;
-
-          if (config.type === 'ifs') {
-            const obj = createIFSObject(x, y, config);
-            if (p.isSky) skyObjects.push(obj);
-            else plants.push(obj);
-          } else {
-            const obj = createLSystemObject(x, y, config, p.isSky);
-            if (p.isSky) skyObjects.push(obj);
-            else plants.push(obj);
-          }
-        }
-
-        function createIFSObject(x, y, config) {
-          const points = generateIFSPoints(config.ifsSets, config.pointCount, config.scale);
-
-          return {
-            type: 'ifs',
-            x: x,
-            y: y,
-            points: points,
-            currentPoint: 0,
-            colors: config.colors.map(hexToRgb),
-            complete: false,
-            scale: config.scale,
-            lineWidth: config.lineWidth || 2,
-            growthSpeed: config.growthSpeed || defaultSpeed
-          };
-        }
-
-        function generateIFSPoints(ifsSets, count, scale) {
-          const points = [];
-          let px = 0, py = 0;
-
-          for (let i = 0; i < 20; i++) {
-            const r = Math.random();
-            let cumProb = 0;
-            for (const set of ifsSets) {
-              cumProb += set[6];
-              if (r <= cumProb) {
-                const [a, b, c, d, e, f] = set;
-                const newX = a * px + b * py + e;
-                const newY = c * px + d * py + f;
-                px = newX;
-                py = newY;
-                break;
-              }
+            .entropy-garden-container .subtitle {
+                color: #5a7a3a;
+                margin-bottom: 15px;
+                font-size: 14px;
             }
-          }
 
-          for (let i = 0; i < count; i++) {
-            const r = Math.random();
-            let cumProb = 0;
-            for (const set of ifsSets) {
-              cumProb += set[6];
-              if (r <= cumProb) {
-                const [a, b, c, d, e, f] = set;
-                const newX = a * px + b * py + e;
-                const newY = c * px + d * py + f;
-                px = newX;
-                py = newY;
+            .entropy-garden-container #canvas-container {
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
 
-                points.push({
-                  x: (px - 0.3) * scale,
-                  y: (py - 0.8) * scale,
-                  depth: Math.random()
+            .entropy-garden-container .controls {
+                background: rgba(255, 255, 255, 0.9);
+                padding: 15px 20px;
+                border-radius: 8px;
+                margin-top: 15px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+                max-width: 900px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .entropy-garden-container .controls label {
+                font-size: 13px;
+                color: #333;
+            }
+
+            .entropy-garden-container .controls input[type="text"],
+            .entropy-garden-container .controls input[type="number"],
+            .entropy-garden-container .controls select,
+            .entropy-garden-container .controls textarea {
+                padding: 5px 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 13px;
+            }
+
+            .entropy-garden-container .controls textarea {
+                font-family: 'Courier New', monospace;
+                line-height: 1.4;
+            }
+
+            .entropy-garden-container .controls input[type="number"] {
+                width: 55px;
+            }
+
+            .entropy-garden-container .controls input[type="text"] {
+                width: 200px;
+            }
+
+            .entropy-garden-container .controls input[type="color"] {
+                width: 35px;
+                height: 25px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .entropy-garden-container .controls select {
+                min-width: 140px;
+            }
+
+            .entropy-garden-container button {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 13px;
+                transition: all 0.2s;
+            }
+
+            .entropy-garden-container .plant-btn {
+                background: #4a7c23;
+                color: white;
+            }
+
+            .entropy-garden-container .plant-btn:hover {
+                background: #5a9428;
+            }
+
+            .entropy-garden-container .sky-btn {
+                background: #5ba4d4;
+                color: white;
+            }
+
+            .entropy-garden-container .sky-btn:hover {
+                background: #6bb4e4;
+            }
+
+            .entropy-garden-container .reset-btn {
+                background: #c0392b;
+                color: white;
+            }
+
+            .entropy-garden-container .reset-btn:hover {
+                background: #e74c3c;
+            }
+
+            .entropy-garden-container .theme-btn {
+                background: #455a64;
+                color: white;
+            }
+
+            .entropy-garden-container .theme-btn:hover {
+                background: #546e7a;
+            }
+
+            .entropy-garden-container .section-label {
+                font-size: 13px;
+                color: #555;
+                margin-right: 5px;
+                font-weight: bold;
+            }
+
+            .entropy-garden-container .color-group {
+                display: flex;
+                gap: 4px;
+                align-items: center;
+            }
+
+            .entropy-garden-container .color-group span {
+                font-size: 11px;
+                color: #666;
+            }
+
+            .entropy-garden-container .instructions {
+                font-size: 12px;
+                color: #666;
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .entropy-garden-container .divider {
+                width: 1px;
+                height: 25px;
+                background: #ddd;
+                margin: 0 5px;
+            }
+
+            .entropy-garden-container .param-group {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .entropy-garden-container .full-width {
+                width: 100%;
+            }
+
+            .entropy-garden-container optgroup {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .entropy-garden-container option {
+                font-weight: normal;
+                padding: 4px;
+            }
+
+            /* Dark mode styles */
+            .entropy-garden-container.dark-mode {
+                background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            }
+
+            .entropy-garden-container.dark-mode .controls {
+                background: rgba(30, 30, 30, 0.9);
+            }
+
+            .entropy-garden-container.dark-mode .controls label,
+            .entropy-garden-container.dark-mode .section-label,
+            .entropy-garden-container.dark-mode .instructions {
+                color: #e0e0e0;
+            }
+        </style>
+
+        <h1><a href="https://samlevy.dev/posts/Entropy-Garden/" target="_blank">BLOG POST</a></h1>
+        <div id="canvas-container"></div>
+
+        <div class="controls">
+            <span class="section-label">Algorithm:</span>
+            <select id="algorithmSelect">
+                <optgroup label="Deterministic Plants">
+                    <option value="bush">Bush</option>
+                    <option value="tree">Tree</option>
+                    <option value="fern">Fern</option>
+                    <option value="flower">Flower</option>
+                </optgroup>
+                <optgroup label="Stochastic Plants">
+                    <option value="stochasticLavender" selected>Stochastic Lavender</option>
+                    <option value="stochasticBush">Stochastic Bush</option>
+                    <option value="stochasticTree">Stochastic Tree</option>
+                </optgroup>
+                <optgroup label="Sky Objects">
+                    <option value="sun">Sun</option>
+                    <option value="cloud">Cloud</option>
+                    <option value="star">Star</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="controls full-width">
+            <div style="width: 100%;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Axiom:</label>
+                <input type="text" id="axiom" value="F" style="width: 100%; font-family: 'Courier New', monospace;">
+            </div>
+        </div>
+
+        <div class="controls full-width">
+            <div style="width: 100%;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Rules: <span
+                        style="font-weight: normal; font-size: 11px; color: #666;">(one per line or
+                        comma-separated)</span></label>
+                <textarea id="rule"
+                    style="width: 100%; min-height: 90px; font-family: 'Courier New', monospace; resize: vertical;">F=FF+[+F-F-F]-[-F+F+F]</textarea>
+            </div>
+        </div>
+
+        <div class="controls">
+            <span class="section-label">Generation:</span>
+            <label>Iterations: <input type="number" id="gens" value="4" min="1" max="8"></label>
+            <label>Growth Speed: <input type="number" id="growthSpeed" value="0.5" min="0.01" max="1" step="0.05"
+                    style="width: 70px;"></label>
+        </div>
+
+        <div class="controls">
+            <span class="section-label">Geometry:</span>
+            <label>Angle: <input type="number" id="angle" value="25" min="1" max="180"></label>
+            <label>Length: <input type="number" id="length" value="8" min="1" max="50" step="1"></label>
+            <label>Line Width: <input type="number" id="lineWidth" value="4" min="1" max="20" step="0.5"
+                    style="width: 60px;"></label>
+            <label>Randomness: <input type="number" id="randomness" value="0" min="0" max="50" step="5"
+                    style="width: 50px;">%</label>
+        </div>
+
+        <div class="controls">
+            <span class="section-label">Colors:</span>
+            <div class="color-group">
+                <span>Base</span>
+                <input type="color" id="color0" value="#228B22">
+            </div>
+            <div class="color-group">
+                <span>Mid</span>
+                <input type="color" id="color1" value="#32CD32">
+            </div>
+            <div class="color-group">
+                <span>Tips</span>
+                <input type="color" id="color2" value="#90EE90">
+            </div>
+            <div class="divider"></div>
+            <button class="reset-btn" id="resetBtn">Clear All</button>
+            <button class="theme-btn" id="themeBtn">Night</button>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+        <script>
+            (function () {
+                /* State variables */
+                let plants = [];
+                let skyObjects = [];
+                let currentType = 'lsystem';
+                let canvasReady = false;
+
+                const defaultSpeed = 0.5;
+
+                const presets = {
+                    bush: {
+                        type: 'lsystem',
+                        axiom: 'F',
+                        rule: 'F=FF+[+F-F-F]-[-F+F+F]',
+                        angle: 25,
+                        length: 10,
+                        colors: ['#228B22', '#32CD32', '#90EE90'],
+                        isSky: false,
+                        gens: 4,
+                        lineWidth: 4,
+                        randomness: 0,
+                    },
+                    tree: {
+                        type: 'lsystem',
+                        axiom: 'X',
+                        rule: 'X=F[+X][-X]FX\nF=FF',
+                        angle: 30,
+                        length: 20,
+                        colors: ['#4a3728', '#5d4a3a', '#6b8e23'],
+                        isSky: false,
+                        gens: 5,
+                        lineWidth: 5,
+                        randomness: 0,
+                    },
+                    fern: {
+                        type: 'lsystem',
+                        axiom: 'X',
+                        rule: 'X=F+[[+FXF]-X]-F[-FX]+X+[F]',
+                        angle: 20,
+                        length: 8,
+                        colors: ['#2e7d32', '#43a047', '#a5d6a7'],
+                        isSky: false,
+                        gens: 5,
+                        lineWidth: 3,
+                        randomness: 20,
+                    },
+                    flower: {
+                        type: 'lsystem',
+                        axiom: 'X',
+                        rule: 'X=F[+X][-X]FX\nF=FF',
+                        angle: 42,
+                        length: 8,
+                        colors: ['#558b2f', '#7cb342', '#f06292'],
+                        isSky: false,
+                        gens: 5,
+                        lineWidth: 3,
+                        randomness: 0,
+                    },
+                    stochasticBush: {
+                        type: 'stochastic',
+                        axiom: 'F',
+                        rule: 'F=FF+[+F-F-F]-[-F+F+F]\nF=F[+F]F[-F]F\nF=FF-[-F+F]+[+F-F]',
+                        angle: 25,
+                        length: 8,
+                        colors: ['#2e7d32', '#66bb6a', '#a5d6a7'],
+                        isSky: false,
+                        gens: 4,
+                        lineWidth: 4,
+                        randomness: 15,
+                    },
+                    stochasticLavender: {
+                        type: 'lsystem',
+                        axiom: 'X',
+                        rule: 'X=F+[[+X]-X]-F[-FX]-X\nF=FF',
+                        angle: 25,
+                        length: 8,
+                        colors: ['#238723', '#B57EDC', '#E6E6FA'],
+                        isSky: false,
+                        gens: 5,
+                        lineWidth: 3,
+                        randomness: 20,
+                    },
+                    stochasticTree: {
+                        type: 'stochastic',
+                        axiom: 'X',
+                        rule: 'X=F[+X][-X]FX\nX=F[-X]FX\nX=F[+X]FX\nF=FF',
+                        angle: 28,
+                        length: 20,
+                        colors: ['#5d4037', '#795548', '#81c784'],
+                        isSky: false,
+                        gens: 5,
+                        lineWidth: 2,
+                        randomness: 20,
+                    },
+                    sun: {
+                        type: 'lsystem',
+                        axiom: '[G]++[G]++[G]++[G]++[G]',
+                        rule: 'F=HJ++IJ----GJ[-HJ----FJ]++\nG=+HJ--IJ[---FJ--GJ]+\nH=-FJ++GJ[+++HJ++IJ]-\nI=--HJ++++FJ[+IJ++++GJ]--GJ\nJ=',
+                        angle: 36,
+                        length: 10,
+                        colors: ['#D53007', '#FD9F1C', '#FDE61C'],
+                        isSky: true,
+                        scale: 0.8,
+                        gens: 5,
+                        lineWidth: 1,
+                        randomness: 0,
+                    },
+                    cloud: {
+                        type: 'ifs',
+                        ifsSets: [
+                            [0.0, 0.577, -0.577, 0.0, 0.0951, 0.5983, 1 / 3],
+                            [0.0, 0.577, -0.577, 0.0, 0.4413, 0.7893, 1 / 3],
+                            [0.0, 0.577, -0.577, 0.0, 0.0952, 0.9893, 1 / 3]
+                        ],
+                        colors: ['#90a4ae', '#b0bec5', '#eceff1'],
+                        isSky: true,
+                        pointCount: 8000,
+                        scale: 200,
+                        lineWidth: 2,
+                        randomness: 100,
+                    },
+                    star: {
+                        type: 'lsystem',
+                        axiom: 'F',
+                        rule: 'F=F[++F][--F][+F][-F]F',
+                        angle: 36,
+                        length: 6,
+                        colors: ['#ffd54f', '#ffeb3b', '#fffde7'],
+                        isSky: true,
+                        scale: 0.3,
+                        gens: 4,
+                        lineWidth: 2,
+                        randomness: 0,
+                    }
+                };
+
+                function hexToRgb(hex) {
+                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? [
+                        parseInt(result[1], 16),
+                        parseInt(result[2], 16),
+                        parseInt(result[3], 16)
+                    ] : [0, 0, 0];
+                }
+
+                function setPreset(name) {
+                    const p = presets[name];
+                    if (!p) return;
+
+                    currentType = p.type;
+
+                    if (p.type === 'lsystem' || p.type === 'stochastic') {
+                        document.getElementById('axiom').value = p.axiom;
+                        document.getElementById('rule').value = p.rule;
+                        document.getElementById('angle').value = p.angle;
+                        document.getElementById('gens').value = p.gens || 4;
+                        document.getElementById('lineWidth').value = p.lineWidth || 4;
+                        document.getElementById('randomness').value = p.randomness || 0;
+                        document.getElementById('length').value = p.length || 8;
+                    } else {
+                        document.getElementById('axiom').value = '(IFS mode)';
+                        document.getElementById('rule').value = '(probabilistic transforms)';
+                        document.getElementById('angle').value = '-';
+                        document.getElementById('gens').value = '-';
+                        document.getElementById('lineWidth').value = p.lineWidth || 2;
+                        document.getElementById('randomness').value = 100;
+                        document.getElementById('length').value = '-';
+                    }
+
+                    document.getElementById('color0').value = p.colors[0];
+                    document.getElementById('color1').value = p.colors[1];
+                    document.getElementById('color2').value = p.colors[2];
+                }
+
+                function resetGarden() {
+                    plants = [];
+                    skyObjects = [];
+                }
+
+                function toggleTheme(btn) {
+                    const container = document.querySelector('.entropy-garden-container');
+                    container.classList.toggle('dark-mode');
+                    if (container.classList.contains('dark-mode')) {
+                        btn.textContent = 'Day';
+                    } else {
+                        btn.textContent = 'Night';
+                    }
+                }
+
+                function getCurrentConfig() {
+                    if (currentType === 'ifs') {
+                        return {
+                            type: 'ifs',
+                            ifsSets: presets.cloud.ifsSets,
+                            colors: [
+                                document.getElementById('color0').value,
+                                document.getElementById('color1').value,
+                                document.getElementById('color2').value
+                            ],
+                            pointCount: presets.cloud.pointCount,
+                            scale: presets.cloud.scale,
+                            lineWidth: parseFloat(document.getElementById('lineWidth').value) || 2,
+                            growthSpeed: parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed
+                        };
+                    }
+
+                    const axiom = document.getElementById('axiom').value;
+                    const ruleStr = document.getElementById('rule').value;
+                    const angle = parseInt(document.getElementById('angle').value) || 25;
+                    const gens = parseInt(document.getElementById('gens').value) || 4;
+                    const length = parseInt(document.getElementById('length').value) || 8;
+                    const lineWidth = parseFloat(document.getElementById('lineWidth').value) || 4;
+                    const randomness = parseInt(document.getElementById('randomness').value) || 0;
+                    const growthSpeed = parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed;
+                    const colors = [
+                        document.getElementById('color0').value,
+                        document.getElementById('color1').value,
+                        document.getElementById('color2').value
+                    ];
+
+                    return {
+                        type: currentType,
+                        axiom,
+                        rule: ruleStr,
+                        angle,
+                        gens,
+                        length,
+                        colors,
+                        lineWidth,
+                        randomness,
+                        growthSpeed
+                    };
+                }
+
+                function getPresetConfig(presetName) {
+                    const p = presets[presetName];
+                    if (!p) return null;
+
+                    if (p.type === 'ifs') {
+                        return {
+                            type: 'ifs',
+                            ifsSets: p.ifsSets,
+                            colors: p.colors,
+                            pointCount: p.pointCount,
+                            scale: p.scale,
+                            lineWidth: p.lineWidth || 2,
+                            growthSpeed: defaultSpeed
+                        };
+                    }
+
+                    return {
+                        type: p.type,
+                        axiom: p.axiom,
+                        rule: p.rule,
+                        angle: p.angle,
+                        gens: p.gens || 4,
+                        length: p.length || 8,
+                        colors: p.colors,
+                        lineWidth: p.lineWidth || 4,
+                        randomness: p.randomness || 0,
+                        growthSpeed: defaultSpeed,
+                        scale: p.scale || 1
+                    };
+                }
+
+                function parseRules(ruleStr) {
+                    const ruleMap = {};
+                    const rules = ruleStr.split('\n').filter(r => r.trim());
+
+                    rules.forEach(r => {
+                        const parts = r.trim().split('=');
+                        if (parts.length === 2) {
+                            const symbol = parts[0].trim();
+                            const production = parts[1].trim();
+
+                            if (!ruleMap[symbol]) {
+                                ruleMap[symbol] = [];
+                            }
+                            ruleMap[symbol].push(production);
+                        }
+                    });
+
+                    return ruleMap;
+                }
+
+                function applyRules(sentence, ruleMap, isStochastic) {
+                    let next = '';
+                    for (let char of sentence) {
+                        if (ruleMap[char]) {
+                            const alternatives = ruleMap[char];
+                            if (alternatives.length > 1) {
+                                const pick = Math.floor(Math.random() * alternatives.length);
+                                next += alternatives[pick];
+                            } else {
+                                next += alternatives[0];
+                            }
+                        } else {
+                            next += char;
+                        }
+                    }
+                    return next;
+                }
+
+                function addObject(x, y, config, isSky) {
+                    if (config.type === 'ifs') {
+                        const obj = createIFSObject(x, y, config);
+                        if (isSky) skyObjects.push(obj);
+                        else plants.push(obj);
+                    } else {
+                        const obj = createLSystemObject(x, y, config, isSky);
+                        if (isSky) skyObjects.push(obj);
+                        else plants.push(obj);
+                    }
+                }
+
+                function addPresetObject(x, y, presetName) {
+                    const p = presets[presetName];
+                    if (!p) return;
+
+                    const config = getPresetConfig(presetName);
+                    if (!config) return;
+
+                    if (config.type === 'ifs') {
+                        const obj = createIFSObject(x, y, config);
+                        if (p.isSky) skyObjects.push(obj);
+                        else plants.push(obj);
+                    } else {
+                        const obj = createLSystemObject(x, y, config, p.isSky);
+                        if (p.isSky) skyObjects.push(obj);
+                        else plants.push(obj);
+                    }
+                }
+
+                function createIFSObject(x, y, config) {
+                    const points = generateIFSPoints(config.ifsSets, config.pointCount, config.scale);
+
+                    return {
+                        type: 'ifs',
+                        x: x,
+                        y: y,
+                        points: points,
+                        currentPoint: 0,
+                        colors: config.colors.map(hexToRgb),
+                        complete: false,
+                        scale: config.scale,
+                        lineWidth: config.lineWidth || 2,
+                        growthSpeed: config.growthSpeed || defaultSpeed
+                    };
+                }
+
+                function generateIFSPoints(ifsSets, count, scale) {
+                    const points = [];
+                    let px = 0, py = 0;
+
+                    for (let i = 0; i < 20; i++) {
+                        const r = Math.random();
+                        let cumProb = 0;
+                        for (const set of ifsSets) {
+                            cumProb += set[6];
+                            if (r <= cumProb) {
+                                const [a, b, c, d, e, f] = set;
+                                const newX = a * px + b * py + e;
+                                const newY = c * px + d * py + f;
+                                px = newX;
+                                py = newY;
+                                break;
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < count; i++) {
+                        const r = Math.random();
+                        let cumProb = 0;
+                        for (const set of ifsSets) {
+                            cumProb += set[6];
+                            if (r <= cumProb) {
+                                const [a, b, c, d, e, f] = set;
+                                const newX = a * px + b * py + e;
+                                const newY = c * px + d * py + f;
+                                px = newX;
+                                py = newY;
+
+                                points.push({
+                                    x: (px - 0.3) * scale,
+                                    y: (py - 0.8) * scale,
+                                    depth: Math.random()
+                                });
+                                break;
+                            }
+                        }
+                    }
+
+                    return points;
+                }
+
+                function createLSystemObject(x, y, config, isSky) {
+                    let sentence = config.axiom;
+                    const ruleMap = parseRules(config.rule);
+                    const gens = config.gens || 4;
+                    const isStochastic = config.type === 'stochastic';
+
+                    for (let i = 0; i < gens; i++) {
+                        sentence = applyRules(sentence, ruleMap, isStochastic);
+                    }
+
+                    const scale = config.scale || 1;
+                    const randomness = config.randomness || 0;
+                    const baseLength = config.length || 8;
+                    const segments = parseLSystem(sentence, config.angle, gens, isSky, scale, randomness, baseLength);
+
+                    return {
+                        type: 'lsystem',
+                        x: x,
+                        y: y,
+                        segments: segments,
+                        currentSegment: 0,
+                        growthProgress: 0,
+                        colors: config.colors.map(hexToRgb),
+                        complete: false,
+                        isSky: isSky,
+                        lineWidth: config.lineWidth || 4,
+                        growthSpeed: config.growthSpeed || defaultSpeed
+                    };
+                }
+
+                function parseLSystem(sentence, angle, gens, isSky, scale, randomness, baseLength) {
+                    const segments = [];
+                    const stack = [];
+                    let x = 0, y = 0;
+                    let dir = isSky ? 0 : -90;
+                    const len = baseLength * scale * Math.pow(0.65, gens - 1);
+                    let depth = 0;
+
+                    const randFactor = randomness / 100;
+
+                    for (let char of sentence) {
+                        if (/[A-Z]/.test(char)) {
+                            const randLen = len * (1 + (Math.random() - 0.5) * randFactor);
+                            const randDir = dir + (Math.random() - 0.5) * angle * randFactor;
+
+                            const newX = x + randLen * Math.cos(randDir * Math.PI / 180);
+                            const newY = y + randLen * Math.sin(randDir * Math.PI / 180);
+                            segments.push({
+                                x1: x, y1: y,
+                                x2: newX, y2: newY,
+                                depth: depth
+                            });
+                            x = newX;
+                            y = newY;
+                        } else if (char === '+') {
+                            dir += angle * (1 + (Math.random() - 0.5) * randFactor);
+                        } else if (char === '-' || char === '−') {
+                            dir -= angle * (1 + (Math.random() - 0.5) * randFactor);
+                        } else if (char === '[') {
+                            stack.push({ x, y, dir, depth });
+                            depth++;
+                        } else if (char === ']') {
+                            const state = stack.pop();
+                            if (state) {
+                                x = state.x;
+                                y = state.y;
+                                dir = state.dir;
+                                depth = state.depth;
+                            }
+                        }
+                    }
+
+                    return segments;
+                }
+
+                function getColorForDepth(t, colors) {
+                    let r, g, b;
+                    if (t < 0.5) {
+                        const t2 = t * 2;
+                        r = colors[0][0] + (colors[1][0] - colors[0][0]) * t2;
+                        g = colors[0][1] + (colors[1][1] - colors[0][1]) * t2;
+                        b = colors[0][2] + (colors[1][2] - colors[0][2]) * t2;
+                    } else {
+                        const t2 = (t - 0.5) * 2;
+                        r = colors[1][0] + (colors[2][0] - colors[1][0]) * t2;
+                        g = colors[1][1] + (colors[2][1] - colors[1][1]) * t2;
+                        b = colors[1][2] + (colors[2][2] - colors[1][2]) * t2;
+                    }
+                    return [r, g, b];
+                }
+
+                /* Set up event listeners */
+                document.getElementById('algorithmSelect').addEventListener('change', function () {
+                    setPreset(this.value);
                 });
-                break;
-              }
-            }
-          }
 
-          return points;
-        }
+                document.getElementById('resetBtn').addEventListener('click', function () {
+                    resetGarden();
+                });
 
-        function createLSystemObject(x, y, config, isSky) {
-          let sentence = config.axiom;
-          const ruleMap = parseRules(config.rule);
-          const gens = config.gens || 4;
-          const isStochastic = config.type === 'stochastic';
+                document.getElementById('themeBtn').addEventListener('click', function () {
+                    toggleTheme(this);
+                });
 
-          for (let i = 0; i < gens; i++) {
-            sentence = applyRules(sentence, ruleMap, isStochastic);
-          }
+                /* Initialize preset to lavender */
+                setPreset('stochasticLavender');
 
-          const scale = config.scale || 1;
-          const randomness = config.randomness || 0;
-          const baseLength = config.length || 8;
-          const segments = parseLSystem(sentence, config.angle, gens, isSky, scale, randomness, baseLength);
+                /* Function to add initial objects */
+                function addInitialObjects() {
+                    addPresetObject(120, 80, 'sun');
 
-          return {
-            type: 'lsystem',
-            x: x,
-            y: y,
-            segments: segments,
-            currentSegment: 0,
-            growthProgress: 0,
-            colors: config.colors.map(hexToRgb),
-            complete: false,
-            isSky: isSky,
-            lineWidth: config.lineWidth || 4,
-            growthSpeed: config.growthSpeed || defaultSpeed
-          };
-        }
+                    addPresetObject(600, 100, 'cloud');
 
-        function parseLSystem(sentence, angle, gens, isSky, scale, randomness, baseLength) {
-          const segments = [];
-          const stack = [];
-          let x = 0, y = 0;
-          let dir = isSky ? 0 : -90;
-          const len = baseLength * scale * Math.pow(0.65, gens - 1);
-          let depth = 0;
+                    addPresetObject(600, 520, 'stochasticLavender');
+                }
 
-          const randFactor = randomness / 100;
+                /* p5.js Instance Mode */
+                const sketch = function (p) {
+                    p.setup = function () {
+                        let canvas = p.createCanvas(800, 600);
+                        canvas.parent('canvas-container');
+                        p.angleMode(p.DEGREES);
 
-          for (let char of sentence) {
-            if (/[A-Z]/.test(char)) {
-              const randLen = len * (1 + (Math.random() - 0.5) * randFactor);
-              const randDir = dir + (Math.random() - 0.5) * angle * randFactor;
+                        addInitialObjects();
+                        canvasReady = true;
+                    };
 
-              const newX = x + randLen * Math.cos(randDir * Math.PI / 180);
-              const newY = y + randLen * Math.sin(randDir * Math.PI / 180);
-              segments.push({
-                x1: x, y1: y,
-                x2: newX, y2: newY,
-                depth: depth
-              });
-              x = newX;
-              y = newY;
-            } else if (char === '+') {
-              dir += angle * (1 + (Math.random() - 0.5) * randFactor);
-            } else if (char === '-' || char === '−') {
-              dir -= angle * (1 + (Math.random() - 0.5) * randFactor);
-            } else if (char === '[') {
-              stack.push({ x, y, dir, depth });
-              depth++;
-            } else if (char === ']') {
-              const state = stack.pop();
-              if (state) {
-                x = state.x;
-                y = state.y;
-                dir = state.dir;
-                depth = state.depth;
-              }
-            }
-          }
+                    p.mousePressed = function () {
+                        if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
 
-          return segments;
-        }
+                        const config = getCurrentConfig();
+                        const selectedPreset = document.getElementById('algorithmSelect').value;
+                        const isSky = presets[selectedPreset]?.isSky || false;
 
-        function getColorForDepth(t, colors) {
-          let r, g, b;
-          if (t < 0.5) {
-            const t2 = t * 2;
-            r = colors[0][0] + (colors[1][0] - colors[0][0]) * t2;
-            g = colors[0][1] + (colors[1][1] - colors[0][1]) * t2;
-            b = colors[0][2] + (colors[1][2] - colors[0][2]) * t2;
-          } else {
-            const t2 = (t - 0.5) * 2;
-            r = colors[1][0] + (colors[2][0] - colors[1][0]) * t2;
-            g = colors[1][1] + (colors[2][1] - colors[1][1]) * t2;
-            b = colors[1][2] + (colors[2][2] - colors[1][2]) * t2;
-          }
-          return [r, g, b];
-        }
+                        addObject(p.mouseX, p.mouseY, config, isSky);
+                    };
 
-        /* Set up event listeners */
-        document.getElementById('algorithmSelect').addEventListener('change', function () {
-          setPreset(this.value);
-        });
+                    p.draw = function () {
+                        const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
 
-        document.getElementById('resetBtn').addEventListener('click', function () {
-          resetGarden();
-        });
+                        /* Draw sky gradient */
+                        for (let y = 0; y < p.height - 80; y++) {
+                            let inter = p.map(y, 0, p.height - 80, 0, 1);
+                            let c;
+                            if (isDark) {
+                                c = p.lerpColor(p.color(25, 25, 60), p.color(10, 10, 30), inter);
+                            } else {
+                                c = p.lerpColor(p.color(135, 206, 235), p.color(240, 248, 255), inter);
+                            }
+                            p.stroke(c);
+                            p.line(0, y, p.width, y);
+                        }
 
-        document.getElementById('themeBtn').addEventListener('click', function () {
-          toggleTheme(this);
-        });
+                        /* Draw sky objects */
+                        for (let obj of skyObjects) {
+                            if (obj.type === 'ifs') {
+                                drawIFSObject(p, obj);
+                                growIFSObject(obj);
+                            } else {
+                                drawLSystemObject(p, obj);
+                                growLSystemObject(obj);
+                            }
+                        }
 
-        /* Initialize preset to lavender */
-        setPreset('stochasticLavender');
+                        /* Draw ground */
+                        p.noStroke();
+                        if (isDark) {
+                            p.fill(40, 35, 30);
+                        } else {
+                            p.fill(139, 119, 101);
+                        }
+                        p.rect(0, p.height - 80, p.width, 80);
 
-        /* Function to add initial objects */
-        function addInitialObjects() {
-          addPresetObject(120, 80, 'sun');
+                        /* Draw grass layer */
+                        if (isDark) {
+                            p.fill(30, 45, 25);
+                        } else {
+                            p.fill(86, 125, 70);
+                        }
+                        p.rect(0, p.height - 80, p.width, 15);
 
-          addPresetObject(600, 100, 'cloud');
+                        /* Draw plants */
+                        for (let plant of plants) {
+                            if (plant.type === 'ifs') {
+                                drawIFSObject(p, plant);
+                                growIFSObject(plant);
+                            } else {
+                                drawLSystemObject(p, plant);
+                                growLSystemObject(plant);
+                            }
+                        }
 
-          addPresetObject(600, 520, 'stochasticLavender');
-        }
+                        /* Draw cursor indicator */
+                        p.noFill();
+                        p.strokeWeight(2);
+                        p.stroke(76, 175, 80, 150);
+                        p.ellipse(p.mouseX, p.mouseY, 30, 30);
+                        p.strokeWeight(1);
+                    };
 
-        /* p5.js Instance Mode */
-        const sketch = function (p) {
-          p.setup = function () {
-            let canvas = p.createCanvas(800, 600);
-            canvas.parent('canvas-container');
-            p.angleMode(p.DEGREES);
+                    function drawIFSObject(p, obj) {
+                        p.push();
+                        p.translate(obj.x, obj.y);
 
-            addInitialObjects();
-            canvasReady = true;
-          };
+                        const pointsToDraw = Math.min(obj.currentPoint, obj.points.length);
 
-          p.mousePressed = function () {
-            if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
+                        for (let i = 0; i < pointsToDraw; i++) {
+                            const pt = obj.points[i];
+                            const col = getColorForDepth(pt.depth, obj.colors);
+                            p.stroke(col[0], col[1], col[2], 180);
+                            p.strokeWeight(obj.lineWidth);
+                            p.point(pt.x, pt.y);
+                        }
 
-            const config = getCurrentConfig();
-            const selectedPreset = document.getElementById('algorithmSelect').value;
-            const isSky = presets[selectedPreset]?.isSky || false;
+                        p.pop();
+                    }
 
-            addObject(p.mouseX, p.mouseY, config, isSky);
-          };
+                    function growIFSObject(obj) {
+                        if (obj.complete) return;
+                        const speed = obj.growthSpeed || defaultSpeed;
+                        obj.currentPoint += Math.floor(speed * 800);
+                        if (obj.currentPoint >= obj.points.length) {
+                            obj.complete = true;
+                        }
+                    }
 
-          p.draw = function () {
-            const isDark = document.querySelector('.entropy-garden-container').classList.contains('dark-mode');
+                    function drawLSystemObject(p, obj) {
+                        p.push();
+                        p.translate(obj.x, obj.y);
 
-            /* Draw sky gradient */
-            for (let y = 0; y < p.height - 80; y++) {
-              let inter = p.map(y, 0, p.height - 80, 0, 1);
-              let c;
-              if (isDark) {
-                c = p.lerpColor(p.color(25, 25, 60), p.color(10, 10, 30), inter);
-              } else {
-                c = p.lerpColor(p.color(135, 206, 235), p.color(240, 248, 255), inter);
-              }
-              p.stroke(c);
-              p.line(0, y, p.width, y);
-            }
+                        let maxDepth = 1;
+                        for (let seg of obj.segments) {
+                            if (seg.depth > maxDepth) maxDepth = seg.depth;
+                        }
 
-            /* Draw sky objects */
-            for (let obj of skyObjects) {
-              if (obj.type === 'ifs') {
-                drawIFSObject(p, obj);
-                growIFSObject(obj);
-              } else {
-                drawLSystemObject(p, obj);
-                growLSystemObject(obj);
-              }
-            }
+                        for (let i = 0; i < obj.currentSegment && i < obj.segments.length; i++) {
+                            drawSegment(p, obj.segments[i], obj.colors, maxDepth, 1, obj.lineWidth, obj.isSky);
+                        }
 
-            /* Draw ground */
-            p.noStroke();
-            if (isDark) {
-              p.fill(40, 35, 30);
-            } else {
-              p.fill(139, 119, 101);
-            }
-            p.rect(0, p.height - 80, p.width, 80);
+                        if (obj.currentSegment < obj.segments.length) {
+                            const seg = obj.segments[obj.currentSegment];
+                            drawSegment(p, seg, obj.colors, maxDepth, obj.growthProgress, obj.lineWidth, obj.isSky);
+                        }
 
-            /* Draw grass layer */
-            if (isDark) {
-              p.fill(30, 45, 25);
-            } else {
-              p.fill(86, 125, 70);
-            }
-            p.rect(0, p.height - 80, p.width, 15);
+                        p.pop();
+                    }
 
-            /* Draw plants */
-            for (let plant of plants) {
-              if (plant.type === 'ifs') {
-                drawIFSObject(p, plant);
-                growIFSObject(plant);
-              } else {
-                drawLSystemObject(p, plant);
-                growLSystemObject(plant);
-              }
-            }
+                    function drawSegment(p, seg, colors, maxDepth, progress, baseLineWidth, isSky) {
+                        const t = maxDepth > 0 ? seg.depth / maxDepth : 0;
+                        const col = getColorForDepth(t, colors);
 
-            /* Draw cursor indicator */
-            p.noFill();
-            p.strokeWeight(2);
-            p.stroke(76, 175, 80, 150);
-            p.ellipse(p.mouseX, p.mouseY, 30, 30);
-            p.strokeWeight(1);
-          };
+                        p.stroke(col[0], col[1], col[2]);
 
-          function drawIFSObject(p, obj) {
-            p.push();
-            p.translate(obj.x, obj.y);
+                        const thickness = Math.max(baseLineWidth - seg.depth * (baseLineWidth * defaultSpeed), 1);
+                        p.strokeWeight(thickness);
 
-            const pointsToDraw = Math.min(obj.currentPoint, obj.points.length);
+                        const x2 = seg.x1 + (seg.x2 - seg.x1) * progress;
+                        const y2 = seg.y1 + (seg.y2 - seg.y1) * progress;
+                        p.line(seg.x1, seg.y1, x2, y2);
+                    }
 
-            for (let i = 0; i < pointsToDraw; i++) {
-              const pt = obj.points[i];
-              const col = getColorForDepth(pt.depth, obj.colors);
-              p.stroke(col[0], col[1], col[2], 180);
-              p.strokeWeight(obj.lineWidth);
-              p.point(pt.x, pt.y);
-            }
+                    function growLSystemObject(obj) {
+                        if (obj.complete) return;
 
-            p.pop();
-          }
+                        const speed = obj.growthSpeed || defaultSpeed;
+                        obj.growthProgress += speed;
 
-          function growIFSObject(obj) {
-            if (obj.complete) return;
-            const speed = obj.growthSpeed || defaultSpeed;
-            obj.currentPoint += Math.floor(speed * 800);
-            if (obj.currentPoint >= obj.points.length) {
-              obj.complete = true;
-            }
-          }
+                        if (obj.growthProgress >= 1) {
+                            obj.growthProgress = 0;
+                            obj.currentSegment++;
 
-          function drawLSystemObject(p, obj) {
-            p.push();
-            p.translate(obj.x, obj.y);
+                            if (obj.currentSegment >= obj.segments.length) {
+                                obj.complete = true;
+                            }
+                        }
+                    }
+                };
 
-            let maxDepth = 1;
-            for (let seg of obj.segments) {
-              if (seg.depth > maxDepth) maxDepth = seg.depth;
-            }
-
-            for (let i = 0; i < obj.currentSegment && i < obj.segments.length; i++) {
-              drawSegment(p, obj.segments[i], obj.colors, maxDepth, 1, obj.lineWidth, obj.isSky);
-            }
-
-            if (obj.currentSegment < obj.segments.length) {
-              const seg = obj.segments[obj.currentSegment];
-              drawSegment(p, seg, obj.colors, maxDepth, obj.growthProgress, obj.lineWidth, obj.isSky);
-            }
-
-            p.pop();
-          }
-
-          function drawSegment(p, seg, colors, maxDepth, progress, baseLineWidth, isSky) {
-            const t = maxDepth > 0 ? seg.depth / maxDepth : 0;
-            const col = getColorForDepth(t, colors);
-
-            p.stroke(col[0], col[1], col[2]);
-
-            const thickness = Math.max(baseLineWidth - seg.depth * (baseLineWidth * defaultSpeed), 1);
-            p.strokeWeight(thickness);
-
-            const x2 = seg.x1 + (seg.x2 - seg.x1) * progress;
-            const y2 = seg.y1 + (seg.y2 - seg.y1) * progress;
-            p.line(seg.x1, seg.y1, x2, y2);
-          }
-
-          function growLSystemObject(obj) {
-            if (obj.complete) return;
-
-            const speed = obj.growthSpeed || defaultSpeed;
-            obj.growthProgress += speed;
-
-            if (obj.growthProgress >= 1) {
-              obj.growthProgress = 0;
-              obj.currentSegment++;
-
-              if (obj.currentSegment >= obj.segments.length) {
-                obj.complete = true;
-              }
-            }
-          }
-        };
-
-        /* Create the p5 instance */
-        new p5(sketch, 'canvas-container');
-      })();
-    </script>
-  </div>
+                /* Create the p5 instance */
+                new p5(sketch, 'canvas-container');
+            })();
+        </script>
+    </div>
 </body>
 
 </html>

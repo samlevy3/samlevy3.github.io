@@ -244,7 +244,6 @@
         <option value="star">Star</option>
       </optgroup>
     </select>
-    <span class="type-indicator lsystem" id="typeIndicator">Deterministic L-System</span>
   </div>
 
   <div class="controls full-width">
@@ -298,8 +297,6 @@
     <button class="reset-btn" id="resetBtn">Clear All</button>
     <button class="theme-btn" id="themeBtn">Night</button>
   </div>
-
-  <p class="instructions">Select an algorithm, adjust parameters, then click the canvas to place</p>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <script>
@@ -453,18 +450,6 @@
         if (!p) return;
 
         currentType = p.type;
-
-        const indicator = document.getElementById('typeIndicator');
-        if (p.type === 'ifs') {
-          indicator.textContent = 'IFS (Chaos Game)';
-          indicator.className = 'type-indicator ifs';
-        } else if (p.type === 'stochastic') {
-          indicator.textContent = 'Stochastic L-System';
-          indicator.className = 'type-indicator stochastic';
-        } else {
-          indicator.textContent = 'Deterministic L-System';
-          indicator.className = 'type-indicator lsystem';
-        }
 
         if (p.type === 'lsystem' || p.type === 'stochastic') {
           document.getElementById('axiom').value = p.axiom;

@@ -33,7 +33,7 @@ _The windmill, first powered by wind, then by solar_
 ![High desert home](/assets/img/entropy-garden/badger-street.jpg){: width="400"}
 _The remote high desert home in Silver Springs, Nevada_
 
-When Chloe asked for art submissions for her birthday gallery show, I knew I wanted to explore entropy. But I've never been confident calling myself an artist.
+When Chloe asked for art submissions for her birthday gallery show, I knew I was going to take this moment to start my own blog (welcome :\)) and I wanted to explore entropy. Beyond that I wasn't  I've never been confident calling myself an artist.
 
 In high school, I applied to the Teen Arts Group (TAG) at the Seattle Art Museum to challenge that feeling of inadequacy. Lacking a piece of art to bring to the the interview, I brought my beat-up running shoes. I explained how the worn treads were a journal of my meditation across the many miles and places I'd been. I loved the challenge of finding art and meaning in something purely functional. That experience taught me that art is a matter of perspective and a willingness to look.
 
@@ -52,9 +52,9 @@ Every Thursday we made art, ate snacks, and planned Teen Night Out: a free museu
 
 So I knew my submission, to truly come from me, needed to be a little odd. I am a technical writer and spend my days writing code, creating diagrams, and responding to jira tickets. I also spend a lot of my day thinking about how to improve interactions between government Open Data and Artificial Intelligence (deeply conflicte about this). I wanted a project that incorporated these parts of myself while pushing me to think about entropy, art, and my complicated relationship with modern AI.
 
-I started by looking at different old school styles of Artificial Intelligence that were  deterministic */ and /* stochastic, explainable, low energy, and understandable. 
+I started by looking at different old school styles of Artificial Intelligence that were  deterministic *and* stochastic, explainable, low energy, and understandable. 
 
-I landed on `L-systems` an early form of AI introduced in 1968 by Aristid Lindenmayer, a Hungarian theoretical biologist and botanist at the University of Utrecht. `L-systems` are a type of formal grammar where an alphabet of symbols is used to create strings using a collection of clearly defined production rules. You can then take these strings and translate them to geometric structures to model the growth of plants. Truly an an early attempt at artificial life. 
+I landed on `L-systems` an early form of AI introduced in 1968 by Aristid Lindenmayer, a Hungarian theoretical biologist and botanist at the University of Utrecht. `L-systems` are a type of formal grammar where an alphabet of symbols is used to create strings using a collection of clearly defined production rules. You can then take these strings and translate them to geometric structures to model the growth of plants. They are an early attempt at artificial life. 
 
 Please interact with garden below! I created some initial templates for plants. Play with the colors, the stochasticity, line length, width, and the angles. If you are curious about creating new plants for the garden, change the rules to define your own artificial life (technical explaination follows below if you're curious how to do that). 
 

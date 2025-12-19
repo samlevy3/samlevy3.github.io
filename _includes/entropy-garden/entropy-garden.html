@@ -22,7 +22,7 @@
     .entropy-garden-container #canvas-container {
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
     .entropy-garden-container .controls {
@@ -231,14 +231,12 @@
         <option value="bush">Bush</option>
         <option value="tree">Tree</option>
         <option value="fern">Fern</option>
-        <option value="fractal">Fractal</option>
         <option value="flower">Flower</option>
       </optgroup>
       <optgroup label="Stochastic Plants">
+        <option value="stochasticLavender" selected>StochasticLavender</option>
         <option value="stochasticBush">Stochastic Bush</option>
         <option value="stochasticTree">Stochastic Tree</option>
-        <option value="stochasticVine">Stochastic Vine</option>
-        <option value="stochasticFern">Stochastic Windswept</option>
       </optgroup>
       <optgroup label="Sky Objects">
         <option value="sun">Sun</option>
@@ -266,7 +264,7 @@
   <div class="controls">
     <span class="section-label">Generation:</span>
     <label>Iterations: <input type="number" id="gens" value="4" min="1" max="8"></label>
-    <label>Growth Speed: <input type="number" id="growthSpeed" value="0.15" min="0.01" max="1" step="0.05" style="width: 70px;"></label>
+    <label>Growth Speed: <input type="number" id="growthSpeed" value="0.5" min="0.01" max="1" step="0.05" style="width: 70px;"></label>
   </div>
 
   <div class="controls">
@@ -304,8 +302,10 @@
       /* State variables */
       let plants = [];
       let skyObjects = [];
-      let plantMode = 'ground';
       let currentType = 'lsystem';
+      let canvasReady = false;
+
+      const defaultSpeed = 0.5;
 
       const presets = {
         bush: {
@@ -313,7 +313,7 @@
           axiom: 'F',
           rule: 'F=FF+[+F-F-F]-[-F+F+F]',
           angle: 25,
-          length: 8,
+          length: 10,
           colors: ['#228B22', '#32CD32', '#90EE90'],
           isSky: false,
           gens: 4,
@@ -325,7 +325,7 @@
           axiom: 'X',
           rule: 'X=F[+X][-X]FX\nF=FF',
           angle: 30,
-          length: 8,
+          length: 20,
           colors: ['#4a3728', '#5d4a3a', '#6b8e23'],
           isSky: false,
           gens: 5,
@@ -335,26 +335,14 @@
         fern: {
           type: 'lsystem',
           axiom: 'X',
-          rule: 'X=F+[[X]-X]-F[-FX]+X\nF=FF',
-          angle: 25,
+          rule: 'X=F+[[+FXF]-X]-F[-FX]+X+[F]',
+          angle: 20,
           length: 8,
           colors: ['#2e7d32', '#43a047', '#a5d6a7'],
           isSky: false,
           gens: 5,
           lineWidth: 3,
-          randomness: 0,
-        },
-        fractal: {
-          type: 'lsystem',
-          axiom: 'F',
-          rule: 'F=F[+F]F[-F]F',
-          angle: 26,
-          length: 8,
-          colors: ['#4a148c', '#7b1fa2', '#ce93d8'],
-          isSky: false,
-          gens: 4,
-          lineWidth: 3,
-          randomness: 0,
+          randomness: 20,
         },
         flower: {
           type: 'lsystem',
@@ -380,41 +368,29 @@
           lineWidth: 4,
           randomness: 15,
         },
+        stochasticLavender: {
+          type: 'lsystem',
+          axiom: 'X',
+          rule: 'X=F+[[+X]-X]-F[-FX]-X\nF=FF',
+          angle: 25,
+          length: 8,
+          colors: ['#238723', '#B57EDC', '#E6E6FA'],
+          isSky: false,
+          gens: 5,
+          lineWidth: 3,
+          randomness: 20,
+        },
         stochasticTree: {
           type: 'stochastic',
           axiom: 'X',
           rule: 'X=F[+X][-X]FX\nX=F[-X]FX\nX=F[+X]FX\nF=FF',
           angle: 28,
-          length: 8,
+          length: 20,
           colors: ['#5d4037', '#795548', '#81c784'],
           isSky: false,
           gens: 5,
-          lineWidth: 5,
-          randomness: 20,
-        },
-        stochasticVine: {
-          type: 'stochastic',
-          axiom: 'F',
-          rule: 'F=F[+F]F\nF=F[-F]F\nF=FF\nF=F[+F][-F]F',
-          angle: 30,
-          length: 8,
-          colors: ['#1b5e20', '#4caf50', '#c5e1a5'],
-          isSky: false,
-          gens: 5,
           lineWidth: 2,
-          randomness: 25,
-        },
-        stochasticWindswept: {
-          type: 'stochastic',
-          axiom: 'F',
-          rule: 'F=FF+[+F-F]-[-F+F]\nF=FF+[+F]-[F]\nF=F+F-F',
-          angle: 22,
-          length: 8,
-          colors: ['#37474f', '#607d8b', '#90a4ae'],
-          isSky: false,
-          gens: 4,
-          lineWidth: 3,
-          randomness: 30,
+          randomness: 20,
         },
         sun: {
           type: 'lsystem',
@@ -422,7 +398,7 @@
           rule: 'F=HJ++IJ----GJ[-HJ----FJ]++\nG=+HJ--IJ[---FJ--GJ]+\nH=-FJ++GJ[+++HJ++IJ]-\nI=--HJ++++FJ[+IJ++++GJ]--GJ\nJ=',
           angle: 36,
           length: 10,
-          colors: ['#ffb300', '#ffd54f', '#fff9c4'],
+          colors: ['#D53007', '#FD9F1C', '#FDE61C'],
           isSky: true,
           scale: 0.8,
           gens: 5,
@@ -506,8 +482,6 @@
         document.getElementById('color0').value = p.colors[0];
         document.getElementById('color1').value = p.colors[1];
         document.getElementById('color2').value = p.colors[2];
-
-        plantMode = p.isSky ? 'sky' : 'ground';
       }
 
       function resetGarden() {
@@ -538,7 +512,7 @@
             pointCount: presets.cloud.pointCount,
             scale: presets.cloud.scale,
             lineWidth: parseFloat(document.getElementById('lineWidth').value) || 2,
-            growthSpeed: parseFloat(document.getElementById('growthSpeed').value) || 0.15
+            growthSpeed: parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed
           };
         }
 
@@ -549,7 +523,7 @@
         const length = parseInt(document.getElementById('length').value) || 8;
         const lineWidth = parseFloat(document.getElementById('lineWidth').value) || 4;
         const randomness = parseInt(document.getElementById('randomness').value) || 0;
-        const growthSpeed = parseFloat(document.getElementById('growthSpeed').value) || 0.15;
+        const growthSpeed = parseFloat(document.getElementById('growthSpeed').value) || defaultSpeed;
         const colors = [
           document.getElementById('color0').value,
           document.getElementById('color1').value,
@@ -567,6 +541,37 @@
           lineWidth,
           randomness,
           growthSpeed
+        };
+      }
+
+      function getPresetConfig(presetName) {
+        const p = presets[presetName];
+        if (!p) return null;
+
+        if (p.type === 'ifs') {
+          return {
+            type: 'ifs',
+            ifsSets: p.ifsSets,
+            colors: p.colors,
+            pointCount: p.pointCount,
+            scale: p.scale,
+            lineWidth: p.lineWidth || 2,
+            growthSpeed: defaultSpeed
+          };
+        }
+
+        return {
+          type: p.type,
+          axiom: p.axiom,
+          rule: p.rule,
+          angle: p.angle,
+          gens: p.gens || 4,
+          length: p.length || 8,
+          colors: p.colors,
+          lineWidth: p.lineWidth || 4,
+          randomness: p.randomness || 0,
+          growthSpeed: defaultSpeed,
+          scale: p.scale || 1
         };
       }
 
@@ -620,6 +625,24 @@
         }
       }
 
+      function addPresetObject(x, y, presetName) {
+        const p = presets[presetName];
+        if (!p) return;
+        
+        const config = getPresetConfig(presetName);
+        if (!config) return;
+
+        if (config.type === 'ifs') {
+          const obj = createIFSObject(x, y, config);
+          if (p.isSky) skyObjects.push(obj);
+          else plants.push(obj);
+        } else {
+          const obj = createLSystemObject(x, y, config, p.isSky);
+          if (p.isSky) skyObjects.push(obj);
+          else plants.push(obj);
+        }
+      }
+
       function createIFSObject(x, y, config) {
         const points = generateIFSPoints(config.ifsSets, config.pointCount, config.scale);
 
@@ -633,7 +656,7 @@
           complete: false,
           scale: config.scale,
           lineWidth: config.lineWidth || 2,
-          growthSpeed: config.growthSpeed || 0.15
+          growthSpeed: config.growthSpeed || defaultSpeed
         };
       }
 
@@ -708,7 +731,7 @@
           complete: false,
           isSky: isSky,
           lineWidth: config.lineWidth || 4,
-          growthSpeed: config.growthSpeed || 0.15
+          growthSpeed: config.growthSpeed || defaultSpeed
         };
       }
 
@@ -786,8 +809,20 @@
         toggleTheme(this);
       });
 
-      /* Initialize preset */
-      setPreset('bush');
+      /* Initialize preset to lavender */
+      setPreset('stochasticLavender');
+
+      /* Function to add initial objects */
+      function addInitialObjects() {
+        // Add sun in upper left area
+        addPresetObject(120, 80, 'sun');
+        
+        // Add cloud in upper right area
+        addPresetObject(600, 100, 'cloud');
+        
+        // Add lavender plants at the bottom
+        addPresetObject(600, 520, 'stochasticLavender');
+      }
 
       /* p5.js Instance Mode */
       const sketch = function(p) {
@@ -795,13 +830,18 @@
           let canvas = p.createCanvas(800, 600);
           canvas.parent('canvas-container');
           p.angleMode(p.DEGREES);
+          
+          // Add initial objects after canvas is ready
+          addInitialObjects();
+          canvasReady = true;
         };
 
         p.mousePressed = function() {
           if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
 
           const config = getCurrentConfig();
-          const isSky = plantMode === 'sky';
+          const selectedPreset = document.getElementById('algorithmSelect').value;
+          const isSky = presets[selectedPreset]?.isSky || false;
 
           addObject(p.mouseX, p.mouseY, config, isSky);
         };
@@ -849,21 +889,7 @@
             p.fill(86, 125, 70);
           }
           p.rect(0, p.height - 80, p.width, 15);
-
-          /* Draw grass blades */
-          if (isDark) {
-            p.stroke(25, 35, 20);
-          } else {
-            p.stroke(76, 115, 60);
-          }
-          p.strokeWeight(1);
-          p.randomSeed(42);
-          for (let i = 0; i < p.width; i += 6) {
-            let h = p.random(5, 18);
-            let sway = p.random(-3, 3);
-            p.line(i, p.height - 80, i + sway, p.height - 80 - h);
-          }
-
+          
           /* Draw plants */
           for (let plant of plants) {
             if (plant.type === 'ifs') {
@@ -876,19 +902,11 @@
           }
 
           /* Draw cursor indicator */
-          if (plantMode) {
-            p.noFill();
-            p.strokeWeight(2);
-            if (plantMode === 'sky') {
-              p.stroke(91, 164, 212, 150);
-              p.ellipse(p.mouseX, p.mouseY, 35, 35);
-            } else {
-              p.stroke(76, 175, 80, 150);
-              p.ellipse(p.mouseX, p.mouseY, 30, 30);
-              p.line(p.mouseX, p.mouseY - 15, p.mouseX, p.mouseY - 28);
-            }
-            p.strokeWeight(1);
-          }
+          p.noFill();
+          p.strokeWeight(2);
+          p.stroke(76, 175, 80, 150);
+          p.ellipse(p.mouseX, p.mouseY, 30, 30);
+          p.strokeWeight(1);
         };
 
         function drawIFSObject(p, obj) {
@@ -910,7 +928,7 @@
 
         function growIFSObject(obj) {
           if (obj.complete) return;
-          const speed = obj.growthSpeed || 0.15;
+          const speed = obj.growthSpeed || defaultSpeed;
           obj.currentPoint += Math.floor(speed * 800);
           if (obj.currentPoint >= obj.points.length) {
             obj.complete = true;
@@ -944,7 +962,7 @@
 
           p.stroke(col[0], col[1], col[2]);
 
-          const thickness = Math.max(baseLineWidth - seg.depth * (baseLineWidth * 0.15), 1);
+          const thickness = Math.max(baseLineWidth - seg.depth * (baseLineWidth * defaultSpeed), 1);
           p.strokeWeight(thickness);
 
           const x2 = seg.x1 + (seg.x2 - seg.x1) * progress;
@@ -955,7 +973,7 @@
         function growLSystemObject(obj) {
           if (obj.complete) return;
 
-          const speed = obj.growthSpeed || 0.15;
+          const speed = obj.growthSpeed || defaultSpeed;
           obj.growthProgress += speed;
 
           if (obj.growthProgress >= 1) {

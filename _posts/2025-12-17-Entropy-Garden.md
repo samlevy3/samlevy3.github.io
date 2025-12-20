@@ -50,7 +50,7 @@ I continued to do that as part of TAG, advocating for creative projects at our e
   </iframe>
 </div>
 
-So I knew my submission, to truly come from me, needed to be a little odd. I am a technical writer and spend my days writing code, creating diagrams, and responding to Jira tickets. I also spend a lot of my day thinking about how to improve interactions between government Open Data and Artificial Intelligence (deeply conflicted about this). I wanted a project that incorporated these parts of myself while pushing me to think about entropy, art, and my complicated relationship with the modern AI.
+So I knew my submission, to truly come from me, needed to be a little odd. I am a software engineer and spend my days writing code, creating diagrams, and responding to Jira tickets. I also spend a lot of my day thinking about how to improve interactions between government Open Data and Artificial Intelligence (deeply conflicted about this). I wanted a project that incorporated these parts of myself while pushing me to think about entropy, art, and my complicated relationship with the modern AI.
 
 I started by looking at older styles of Artificial Intelligence that were deterministic *and* stochastic, explainable, low energy, and understandable. 
 

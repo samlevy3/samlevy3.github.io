@@ -20,24 +20,24 @@ Lack of order or **predictability**; **gradual** decline into disorder.
 ---
 I come from a family of 6, argumentative, opinionated, and curious. There is always a low pressure storm building, waiting to break out into an argument, debate, or spontaneous dance session in the kitchen.
 
-My mother first introduced to the idea of Entropy. As her parents (my Opa and Nana) began to age, the reality of living in the remote high desert of Nevada became untenable. Their property required constant maintenance: including a well, first powered by a homemade windmill, then by solar panels he installed himself. 
+My mother first introduced me to the idea of Entropy. As her parents (my Opa and Nana) began to age, the reality of living in the remote high desert of Nevada became untenable. Their property required constant maintenance including a well, first powered by a homemade windmill, then by solar panels my Opa installed himself. 
 
-My mom, the oldest of her siblings, decided to build a house in our backyard for my Opa and Nana to move into. The [Entropy House](https://www.pinterest.com/levyrachael/entropy-house/) was born. This project, born from pragmatic love became a home for us all to experience the Entropy inherent in the process of life, death, and rebirth. 
+My mom, the oldest of her siblings, decided to build a house in our backyard for my Opa and Nana to move into. Thus, the [Entropy House](https://www.pinterest.com/levyrachael/entropy-house/) was born. This project, born from pragmatic love, became a home for us all to experience the entropy inherent in the process of life, death, and rebirth. 
 
 ![Windmill with Opa working](/assets/img/entropy-garden/windmill.jpg){: width="400"}
 _My Opa maintaining the windmill that powered their well_
 
 ![Opa in front of windmill](/assets/img/entropy-garden/opa-windmill.jpg){: width="400"}
-_The windmill, first powered by wind, then by solar_
+_The windmill
 
 ![High desert home](/assets/img/entropy-garden/badger-street.jpg){: width="400"}
 _The remote high desert home in Silver Springs, Nevada_
 
-When Chloe asked for art submissions for her birthday gallery show, I knew I was going to take this moment to start my own blog (welcome :\)) and I wanted to explore entropy. Beyond that I wasn't  I've never been confident calling myself an artist.
+When Chloe asked for art submissions for her birthday gallery show, I knew I was going to take this moment to start my own blog (welcome :\)) and I wanted to explore entropy. I also wanted to continue to work on my persistent doubt that I'm not creative enough to be an artist.
 
-In high school, I applied to the Teen Arts Group (TAG) at the Seattle Art Museum to challenge that feeling of inadequacy. Lacking a piece of art to bring to the the interview, I brought my beat-up running shoes. I explained how the worn treads were a journal of my meditation across the many miles and places I'd been. I loved the challenge of finding art and meaning in something purely functional. That experience taught me that art is a matter of perspective and a willingness to look.
+I have been doing this work for a long time. In high school, I applied to the Teen Arts Group (TAG) at the Seattle Art Museum to challenge that feeling of inadequacy. Lacking a piece of art to bring to the interview, I brought my beat-up running shoes. I explained how the worn treads were a journal of meditation across the many miles and places I'd been. I loved the challenge of finding art and meaning in something purely functional. 
 
-Every Thursday we made art, ate snacks, and planned Teen Night Out: a free museum party for teens with live performances, figure painting, and tours. My favorite project as part of TAG was working with a piece from the museum's collection. I chose the elevator doors from the Chicago Stock Exchange, an exhibit I'd initially walked past without realizing it was art. 
+I continued to do that as part of TAG, advocating for creative projects at our events that were accessible to those who didn't connect to art in more traditional mediums.  My favorite project as part of TAG was showcasing a piece from the museum's collection. I chose the elevator doors from the Chicago Stock Exchange, an exhibit I'd initially walked past without even realizing it was part of the museum. 
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 2rem 0;">
   <iframe 
@@ -50,21 +50,21 @@ Every Thursday we made art, ate snacks, and planned Teen Night Out: a free museu
   </iframe>
 </div>
 
-So I knew my submission, to truly come from me, needed to be a little odd. I am a technical writer and spend my days writing code, creating diagrams, and responding to jira tickets. I also spend a lot of my day thinking about how to improve interactions between government Open Data and Artificial Intelligence (deeply conflicte about this). I wanted a project that incorporated these parts of myself while pushing me to think about entropy, art, and my complicated relationship with modern AI.
+So I knew my submission, to truly come from me, needed to be a little odd. I am a technical writer and spend my days writing code, creating diagrams, and responding to Jira tickets. I also spend a lot of my day thinking about how to improve interactions between government Open Data and Artificial Intelligence (deeply conflicted about this). I wanted a project that incorporated these parts of myself while pushing me to think about entropy, art, and my complicated relationship with the modern AI.
 
-I started by looking at different old school styles of Artificial Intelligence that were  deterministic *and* stochastic, explainable, low energy, and understandable. 
+I started by looking at older styles of Artificial Intelligence that were deterministic *and* stochastic, explainable, low energy, and understandable. 
 
-I landed on `L-systems` an early form of AI introduced in 1968 by Aristid Lindenmayer, a Hungarian theoretical biologist and botanist at the University of Utrecht. `L-systems` are a type of formal grammar where an alphabet of symbols is used to create strings using a collection of clearly defined production rules. You can then take these strings and translate them to geometric structures to model the growth of plants. They are an early attempt at artificial life. 
+I decided on `L-systems` an early form of AI introduced in 1968 by Aristid Lindenmayer, a Hungarian theoretical biologist and botanist at the University of Utrecht. `L-systems` are a type of formal grammar where an alphabet of symbols is used to create strings using a collection of clearly defined production rules. You can then take these strings and translate them to geometric structures to model the growth of plants. I loved that this technique was able to create artificial life using only a few clearly defined and understandable rules. 
 
-Please interact with garden below! I created some initial templates for plants. Play with the colors, the stochasticity, line length, width, and the angles. If you are curious about creating new plants for the garden, change the rules to define your own artificial life (technical explaination follows below if you're curious how to do that). 
+Please interact with garden below! I created some initial templates for plants. Play with the colors, the stochasticity, line length, width, and the angles. If you are interested in creating new plants for the garden, change the rules to define your own artificial life (technical explaination follows below if you're curious how to do that). 
 
-I do believe that technology is one of many tools we can use to help make our communities stronger. But I also think to do that, technology needs to be understandable, community driven, and beautiful. Enjoy!! 
+I believe that technology is one of many tools we can use to help make our communities stronger. But I also want technology to be understandable, community driven, and beautiful. Enjoy!! 
 
 ## The Garden 
 
 {% include entropy-garden/entropy-garden.html %}
 
-## Explaination
+## Explanation
 
 ### What Are L-Systems?
 

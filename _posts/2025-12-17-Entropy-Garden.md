@@ -91,7 +91,7 @@ The `[` and `]` brackets create branching: the turtle "remembers" where it was, 
 
 ### Deterministic vs. Stochastic
 
-**Deterministic L-systems** produce the same output every time—the same rules always generate the same plant.
+**Deterministic L-systems** produce the same output every time: the same rules always generate the same plant.
 
 **Stochastic L-systems** introduce randomness by providing multiple possible replacements for a symbol. Each time a rule is applied, one option is chosen at random. This creates natural variation: no two plants are exactly alike. 
 

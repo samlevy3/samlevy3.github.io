@@ -20,7 +20,7 @@ Lack of order or **predictability**; **gradual** decline into disorder.
 ---
 I come from a family of 6, argumentative, opinionated, and curious. There is always a low pressure storm building, waiting to break out into an argument, debate, or spontaneous dance session in the kitchen.
 
-My mother first introduced me to the idea of Entropy. As her parents (my Opa and Nana) began to age, the reality of living in the remote high desert of Nevada became untenable. Their property required constant maintenance including a well, first powered by a homemade windmill, then by solar panels my Opa installed himself. 
+My mother first introduced me to the idea of entropy. As her parents (my Opa and Nana) began to age, the reality of living in the remote high desert of Nevada became untenable. Their property required constant maintenance including a well, first powered by a homemade windmill, then by solar panels my Opa installed himself. 
 
 My mom, the oldest of her siblings, decided to build a house in our backyard for my Opa and Nana to move into. Thus, the [Entropy House](https://www.pinterest.com/levyrachael/entropy-house/) was born. This project, born from pragmatic love, became a home for us all to experience the entropy inherent in the process of life, death, and rebirth. 
 

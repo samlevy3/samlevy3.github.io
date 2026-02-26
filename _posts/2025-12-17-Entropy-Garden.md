@@ -1,7 +1,7 @@
 ---
 title: Entropy Garden
 date: 2025-12-17 22:26:00
-categories: [ART, TECH_ART]
+categories: [ART, TECH]
 tags: []
 ---
 ## en·tro·py
